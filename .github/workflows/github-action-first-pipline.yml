@@ -8,6 +8,6 @@ jobs:
 
     steps:
       - name: check waar ik benm
-        run: ls -la
+        run: ls -l
       - name: build WAR
         run: mvn clean package   
