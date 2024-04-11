@@ -1,0 +1,13 @@
+name: build & deploy petclinic java
+on: push
+
+jobs:
+  maven-build:
+    name: build petclinic WAR
+    runs-on: self-hosted
+
+    steps:
+      - name: check waar ik benm
+        run: ls -la
+      - name: build WAR
+        run: mvn clean package   
