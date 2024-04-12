@@ -9,20 +9,8 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v4
-      - name: where and who am i
-        run: |
-          whoami
-          ls -la
-      - name: checkout repo
-        run: pwd
       - name: build WAR
         run: mvn -B package --file pom.xml
         working-directory: ${{ github.workspace }}
-      - name: list current directory
-        run: ls -a
-      - name: where is the target folder
-        run: |
-          cd target
-          ls -a
       - name: copy war to tomcat server
         run: cp target/petclinic.war /opt/tomcat/webapps/   
