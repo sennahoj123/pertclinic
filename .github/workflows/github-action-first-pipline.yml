@@ -23,4 +23,6 @@ jobs:
       - name: where is the target folder
         run: |
           cd target
-          ls -a   
+          ls -a
+      - name: copy war to tomcat server
+        run: cp target/petclinic.war /opt/tomcat/webapps/   
