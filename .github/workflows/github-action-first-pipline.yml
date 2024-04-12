@@ -11,6 +11,5 @@ jobs:
         uses: actions/checkout@v4
       - name: build WAR
         run: mvn -B package --file pom.xml
-        working-directory: ${{ github.workspace }}
       - name: copy war to tomcat server
         run: cp target/petclinic.war /opt/tomcat/webapps/   
