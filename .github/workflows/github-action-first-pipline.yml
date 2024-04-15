@@ -1,5 +1,7 @@
 name: build & deploy petclinic java
-on: push
+on: 
+  push
+  schedule: '0 0 12 * * ?'
 
 jobs:
   maven-build:
