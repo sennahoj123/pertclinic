@@ -16,8 +16,7 @@ jobs:
       - name: JMeter Test
         uses: QAInsights/PerfAction@v5.6.2
         with:
-          test-plan-path: ./TestPlans/S01_SimpleExample/S01_SimpleExample.jmx
-            args: "./FirstJmeterScript.jmx"
+          test-plan-path: "./FirstJmeterScript.jmx"
       - name: Upload Results
         uses: actions/upload-artifact@v3
         with:
