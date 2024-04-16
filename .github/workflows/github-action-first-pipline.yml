@@ -19,6 +19,12 @@ jobs:
     steps:
       - name: copy war to tomcat server
         run: cp target/petclinic.war /opt/tomcat/webapps/
+  Selinium-test:
+    name: Selinium Test
+    runs-on: self-hosted
+    steps:
+      - name: Selinium
+        run: selenium-side-runner /home/iede/traineeship_files/PetclinicSeliniumTest.side
   Jmeter-test:
     name: Test Jmeter
     runs-on: self-hosted
@@ -33,10 +39,3 @@ jobs:
           name: jmeter-results
           path: result.jtl
           if-no-files-found: error
-  Selinium-test:
-    name: Selinium Test
-    runs-on: self-hosted
-    steps:
-      - name: Selinium
-      - run: selenium-side-runner /home/iede/traineeship_files/PetclinicSeliniumTest.side
-
