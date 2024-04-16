@@ -6,7 +6,7 @@ on:
 
 jobs:
   maven-build:
-    name: build petclinic WAR
+    name: Build petclinic WAR
     runs-on: self-hosted
     steps:
       - name: checkout code
@@ -14,13 +14,13 @@ jobs:
       - name: build WAR
         run: mvn -B package --file pom.xml
   maven-deploy:
-    name: build petclinic WAR
+    name: Deploy Maven
     runs-on: self-hosted
     steps:
       - name: copy war to tomcat server
         run: cp target/petclinic.war /opt/tomcat/webapps/
   Jmeter-test:
-    name: build petclinic WAR
+    name: Test Jmeter
     runs-on: self-hosted
     steps:
       - name: JMeter Test
