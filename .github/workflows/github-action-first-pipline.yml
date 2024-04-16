@@ -13,14 +13,12 @@ jobs:
         uses: actions/checkout@v4
       - name: build WAR
         run: mvn -B package --file pom.xml
-jobs1:
   maven-deploy:
     name: build petclinic WAR
     runs-on: self-hosted
     steps:
       - name: copy war to tomcat server
         run: cp target/petclinic.war /opt/tomcat/webapps/
-jobs2:
   Jmeter-test:
     name: build petclinic WAR
     runs-on: self-hosted
