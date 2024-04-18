@@ -6,23 +6,30 @@ on:
 
 jobs:
   maven-build:
-    name: build petclinic WAR
+    name: Build petclinic WAR
     runs-on: self-hosted
-
     steps:
       - name: checkout code
         uses: actions/checkout@v4
       - name: build WAR
         run: mvn -B package --file pom.xml
+  maven-deploy:
+    name: Deploy Maven
+    runs-on: self-hosted
+    steps:
       - name: copy war to tomcat server
         run: cp target/petclinic.war /opt/tomcat/webapps/
+  Selinium-test:
+    name: Selinium Test
+    runs-on: self-hosted
+    steps:
+      - name: Selinium
+        run: selenium-side-runner /home/iede/traineeship_files/PetclinicSeliniumTest.side
+  Jmeter-test:
+    name: Test Jmeter
+    runs-on: self-hosted
+    steps:
       - name: JMeter Test
-        uses: QAInsights/PerfAction@v5.6.2
-        with:
-          test-plan-path: "./FirstJmeterScript.jmx"
-      - name: Upload Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: jmeter-results
-          path: result.jtl
-          if-no-files-found: error          
+        uses: docker
+          with:
+            file: ./Dockerfile
