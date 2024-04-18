@@ -29,7 +29,7 @@ jobs:
     name: Test Jmeter
     runs-on: self-hosted
     steps:
-      - name: JMeter Test
-        uses: docker
-          with:
-            file: ./Dockerfile
+      - name: checkout code
+        uses: actions/checkout@v4
+      - name: build
+        run: docker build .
