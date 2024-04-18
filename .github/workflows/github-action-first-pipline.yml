@@ -30,6 +30,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: JMeter Test
-        uses: docker://1b0bcccddb63
-        with:
-          test-plan-path: "./home/iede/petclinic/pertclinic/testing/petclinic_load_test.jmx"
+        uses: docker
+          with:
+            file: ./Dockerfile
