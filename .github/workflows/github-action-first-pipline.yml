@@ -30,12 +30,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: JMeter Test
-        uses: QAInsights/PerfAction@v5.6.2
+        uses: docker://1b0bcccddb63
         with:
-          test-plan-path: "./FirstJmeterScript.jmx"
-      - name: Upload Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: jmeter-results
-          path: result.jtl
-          if-no-files-found: error
+          test-plan-path: "./home/iede/petclinic/pertclinic/testing/petclinic_load_test.jmx"
