@@ -24,7 +24,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Selinium
-        run: selenium-side-runner /home/iede/petclinic/pertclinic/testing/PetclinicSeleniumTest.side
+        run: selenium-side-runner /home/iede/petclinic/pertclinic/PetclinicSeleniumTest.side
   Jmeter-test:
     name: Jmeter Test
     runs-on: self-hosted
@@ -34,4 +34,4 @@ jobs:
       - name: Build Docker image
         run: docker build -t jmeterrun .
       - name: Run Docker container
-        run: docker run -v /home/iede/petclinic/pertclinic/testing:/opt/apache-jmeter-5.6.3/bin/results -it jmeterrun
+        run: docker run -v /home/iede/petclinic/pertclinic:/opt/apache-jmeter-5.6.3/bin/results jmeterrun
