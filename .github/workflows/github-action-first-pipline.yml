@@ -28,12 +28,11 @@ jobs:
   Jmeter-test:
     name: Jmeter Test
     runs-on: self-hosted
-    container:
-      image: jmeterrun11:latest
-      volumes:
-        - /home/iede/petclinic/pertclinic/testing:/opt/apache-jmeter-5.6.3/bin/results
     steps:
       - name: checkout code
         uses: actions/checkout@v4
-      - name: Run JMeter test
-        run: docker run jmeterrun11
+      - name: Build Docker image
+        run: docker build -t dockerfile .
+      - name: Run Docker container
+        run: docker run -v /home/iede/petclinic/pertclinic/testing:/opt/apache-jmeter-5.6.3/bin/results -it dockerfile
+
