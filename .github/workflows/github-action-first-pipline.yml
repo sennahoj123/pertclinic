@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v4
+      - name: check out where i am
+        run: ls-la
       - name: Build Docker image
         run: docker build -t dockerfile .
       - name: Run Docker container
