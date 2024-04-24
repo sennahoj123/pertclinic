@@ -25,7 +25,7 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
       - name: copy war to tomcat server
-        run: cp /home/iede/actions-runner/_work/pertclinic/pertclinic/target/petclinic.war /opt/tomcat/webapps/
+        run: cp target/petclinic.war /opt/tomcat/webapps/
   Selinium-test:
     name: Selinium Test
     runs-on: self-hosted
