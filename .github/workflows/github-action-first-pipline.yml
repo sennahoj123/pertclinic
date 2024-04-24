@@ -13,6 +13,10 @@ jobs:
         uses: actions/checkout@v4
       - name: build WAR
         run: mvn -B package --file pom.xml
+      - name: checkout path
+        run: |
+          pwd
+          ls -la
   maven-deploy:
     name: Deploy Maven
     runs-on: self-hosted
@@ -21,6 +25,8 @@ jobs:
         run: |
           pwd
           ls -la
+      - name: checkout code
+        uses: actions/checkout@v4
       - name: copy war to tomcat server
         run: cp target/petclinic.war /opt/tomcat/webapps/
   Selinium-test:
