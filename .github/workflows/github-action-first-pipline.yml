@@ -6,7 +6,7 @@ on:
 
 jobs:
   maven-build:
-    name: Build petclinic WAR 1
+    name: Build petclinic WAR
     runs-on: self-hosted
     steps:
       - name: checkout code
@@ -14,7 +14,7 @@ jobs:
       - name: build WAR
         run: mvn -B package --file pom.xml
   maven-deploy:
-    name: Deploy Maven 2
+    name: Deploy Maven
     runs-on: self-hosted
     steps:
       - name: inside 
@@ -22,6 +22,7 @@ jobs:
           cd ..
           pwd
           ls -la
+          cd target
       - name: copy war to tomcat server
         run: cp ./petclinic.war /opt/tomcat/webapps/
       - name: where am i
@@ -29,13 +30,13 @@ jobs:
       - name: inside 
         run: ls -la
   Selinium-test:
-    name: Selinium Test 3
+    name: Selinium Test
     runs-on: self-hosted
     steps:
       - name: Selinium
         run: selenium-side-runner PetclinicSeleniumTest.side
   Jmeter-test:
-    name: Jmeter Test 4
+    name: Jmeter Test
     runs-on: self-hosted
     steps:
       - name: checkout code
