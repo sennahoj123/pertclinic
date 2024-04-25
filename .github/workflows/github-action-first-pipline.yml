@@ -17,18 +17,8 @@ jobs:
     name: Deploy Maven
     runs-on: self-hosted
     steps:
-      - name: inside 
-        run: |
-          cd ..
-          pwd
-          ls -la
-          cd ../target
       - name: copy war to tomcat server
         run: cp ./petclinic.war /opt/tomcat/webapps/
-      - name: where am i
-        run: pwd
-      - name: inside 
-        run: ls -la
   Selinium-test:
     name: Selinium Test
     runs-on: self-hosted
