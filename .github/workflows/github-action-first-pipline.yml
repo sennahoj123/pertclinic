@@ -21,9 +21,8 @@ jobs:
         run: |
           pwd
           ls -la
-          cd target
-      - name: checkout code
-        uses: actions/checkout@v4
+      - name: enter target
+        run: cd target
       - name: copy war to tomcat server
         run: cp target/petclinic.war /opt/tomcat/webapps/
   Selinium-test:
