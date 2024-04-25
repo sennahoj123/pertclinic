@@ -18,15 +18,15 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: enter target
-        run: |
-          cd target
-          ls -la
+        run: cd target
+      - name: inside 
+        run: ls -la
       - name: copy war to tomcat server
         run: cp ./petclinic.war /opt/tomcat/webapps/
-      - name: enter target
-        run: |
-          cd target
-          ls -la
+      - name: where am i
+        run: pwd
+      - name: inside 
+        run: ls -la
   Selinium-test:
     name: Selinium Test 3
     runs-on: self-hosted
