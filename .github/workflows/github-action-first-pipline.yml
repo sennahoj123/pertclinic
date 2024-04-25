@@ -22,7 +22,7 @@ jobs:
           cd ..
           pwd
           ls -la
-          cd target
+          cd ../target
       - name: copy war to tomcat server
         run: cp ./petclinic.war /opt/tomcat/webapps/
       - name: where am i
@@ -51,7 +51,7 @@ jobs:
           name: Test_results
           path: ./testresultsiede.jtl
       - name: check error code
-        run: grep "Non HTTP response message" testresultsiede.jtl || exit code 1
+        run: grep "Non HTTP response message" testresultsiede.jtl || exit 1
 
 
 
