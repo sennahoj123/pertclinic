@@ -51,7 +51,7 @@ jobs:
           name: Test_results
           path: ./testresultsiede.jtl
       - name: check error code
-        run: grep "Non HTTP response message" testresultsiede.jtl || exit 1
+        run: grep "Non HTTP response message" testresultsiede.jtl && exit 1
 
 
 
