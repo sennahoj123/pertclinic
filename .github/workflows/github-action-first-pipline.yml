@@ -6,7 +6,7 @@ on:
 
 jobs:
   maven-build:
-    name: Build petclinic WAR
+    name: Build petclinic WAR 1
     runs-on: self-hosted
     steps:
       - name: checkout code
@@ -14,21 +14,21 @@ jobs:
       - name: build WAR
         run: mvn -B package --file pom.xml
   maven-deploy:
-    name: Deploy Maven
+    name: Deploy Maven 2
     runs-on: self-hosted
     steps:
       #- name: enter target
         #run: cd target
       - name: copy war to tomcat server
-        run: cp ./target/petclinic.war /opt/tomcat/webapps/
+        run: cp ./petclinic.war /opt/tomcat/webapps/
   Selinium-test:
-    name: Selinium Test
+    name: Selinium Test 3
     runs-on: self-hosted
     steps:
       - name: Selinium
         run: selenium-side-runner PetclinicSeleniumTest.side
   Jmeter-test:
-    name: Jmeter Test
+    name: Jmeter Test 4
     runs-on: self-hosted
     steps:
       - name: checkout code
@@ -36,7 +36,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t jmeterrun .
       - name: Run Docker container
-        run: docker run -v /home/iede/petclinic/pertclinic:/opt/apache-jmeter-5.6.3/bin/results jmeterrun
+        run: docker run -v $PWD:/opt/apache-jmeter-5.6.3/bin/results jmeterrun
       - name: upload results
         uses: actions/upload-artifact@v4
         with:
