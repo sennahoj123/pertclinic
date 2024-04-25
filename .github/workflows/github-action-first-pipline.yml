@@ -19,6 +19,7 @@ jobs:
     steps:
       - name: inside 
         run: |
+          cd ..
           pwd
           ls -la
       - name: copy war to tomcat server
