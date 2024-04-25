@@ -19,8 +19,6 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v4
-      - name: enter target
-        run: cd target
       - name: inside 
         run: ls -la
       - name: copy war to tomcat server
