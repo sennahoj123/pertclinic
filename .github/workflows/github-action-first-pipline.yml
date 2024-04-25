@@ -36,15 +36,22 @@ jobs:
       - name: Build Docker image
         run: docker build -t jmeterrun .
       - name: Run Docker container
-        run: docker run jmeterrun
+        run: docker run -v $PWD:/$PWD jmeterrun
+      - name: where am I
+        run: |
+          pwd
+          ls -la
       - name: upload results
         uses: actions/upload-artifact@v4
         with:
           name: test_results
-          path: results/**
-          if-no-file-found: error
+          path: /opt/apache-jmeter-5.6.3/bin/results//testresultsiede.jtl
+      - name: where am I
+        run: |
+          pwd
+          ls -la
       - name: check error code
-        run: grep -q "Non HTTP response message" ./testresultsiede.jtl && exit 1
+        run: grep -q "Non HTTP response message" ./testresultsiede.jtl && exit code 1
 
 
 
