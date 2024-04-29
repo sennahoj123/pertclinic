@@ -13,14 +13,15 @@ jobs:
         uses: actions/checkout@v4
       - name: build WAR
         run: mvn -B package --file pom.xml
+      - name: upload .war
+        uses: actions/upload-artifact@v4
+        with:
+          name: petclinic.war
+          path: target/**.war
   maven-deploy:
     name: Deploy Maven
     runs-on: self-hosted
     steps:
-      - name: where am i
-        run: pwd
-      - name: fodlers
-        run: ls -la
       #- name: copy war to tomcat server
       #  run: cp ./petclinic.war /opt/tomcat/webapps/
   Selinium-test:
