@@ -34,12 +34,14 @@ jobs:
   Selinium-test:
     name: Selinium Test
     runs-on: self-hosted
+    needs: maven-deploy
     steps:
       - name: Selinium
         run: selenium-side-runner PetclinicSeleniumTest.side
   Jmeter-test:
     name: Jmeter Test
     runs-on: self-hosted
+    needs: Selinium-test
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -53,7 +55,4 @@ jobs:
           name: Test_results
           path: ./testresultsiede.jtl
       - name: check error code
-        run: grep "Non HTTP response message" testresultsiede.jtl && exit 1
-
-
-
+        run: grep "Non HTTP response message" testresultsiede.jtl || exit 1
