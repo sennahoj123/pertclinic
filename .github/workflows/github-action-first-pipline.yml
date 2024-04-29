@@ -21,13 +21,16 @@ jobs:
   maven-deploy:
     name: Deploy Maven
     runs-on: self-hosted
+    needs: maven-build
     steps:
-      - name: checkout path
-        run: |
-          pwd
-          ls -la
-      #- name: copy war to tomcat server
-      #  run: cp ./petclinic.war /opt/tomcat/webapps/
+      - name: download artifect
+        uses: actions/download-artifact@v4
+        with:
+          name: petclinic.war
+      - name: Display structure of downloaded files
+        run: ls -R  
+      - name: copy war to tomcat server
+        run: cp ./petclinic.war /opt/tomcat/webapps/
   Selinium-test:
     name: Selinium Test
     runs-on: self-hosted
