@@ -22,6 +22,10 @@ jobs:
     name: Deploy Maven
     runs-on: self-hosted
     steps:
+      - name: checkout path
+        run: |
+          pwd
+          ls -la
       #- name: copy war to tomcat server
       #  run: cp ./petclinic.war /opt/tomcat/webapps/
   Selinium-test:
