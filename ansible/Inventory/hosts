@@ -1,0 +1,5 @@
+[own_pc]
+localhost ansible_connection=local ansible_user=iede
+
+[azure_vm]
+4.245.11.69 
