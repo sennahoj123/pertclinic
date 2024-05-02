@@ -1,0 +1,7 @@
+## mian playbook to execute alles
+- name: install testing en deplopy petclinic
+  hosts: azure_vm
+  become: yes
+  remote_user: ubuntu
+  roles:
+    - install-docker
