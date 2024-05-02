@@ -1,5 +1,7 @@
+## Hoste file voor mijn vm's
+
 [own_pc]
 localhost ansible_connection=local ansible_user=iede
 
 [azure_vm]
-4.245.11.69 ansible_user=azureuser ansible_ssh_private_key_file=/home/iede/.ssh/id_rsa_ansible
+provisioning 4.245.11.69 ansible_user=azureuser ansible_ssh_private_key_file=/home/iede/.ssh/id_rsa_ansible

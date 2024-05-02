@@ -4,4 +4,5 @@
   become: yes
   remote_user: ubuntu
   roles:
-    - install-docker
+    - Install-docker
+    - Install-maven
