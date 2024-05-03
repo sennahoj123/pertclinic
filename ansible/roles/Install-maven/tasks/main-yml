@@ -3,14 +3,6 @@
   apt:
     update_cache: yes
 
-- name: Install unzip and tar
-  ansible.builtin.apt:
-    name:
-      - unzip
-      - tar
-    state: present
-  become: true
-
 - name: Download Apache Maven
   vars:
     myurl: "https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz"
