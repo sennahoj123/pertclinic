@@ -1,4 +1,8 @@
 ---
+- name: Update apt package cache
+  ansible.builtin.apt:
+    update_cache: yes
+    
 - name: install apt-transport-https
   ansible.builtin.apt:
     name:
@@ -25,7 +29,3 @@
     name: docker.io
     state: latest
     update_cache: true
-
-- name: Update apt package cache
-  ansible.builtin.apt:
-    update_cache: yes
