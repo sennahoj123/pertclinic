@@ -2,7 +2,6 @@
 - name: install testing en deplopy petclinic
   hosts: azure_vm
   become: yes
-  remote_user: ubuntu
+  remote_user: azureuser
   roles:
-    - Install-docker
-    - Install-maven
+    - Install-tomcat
