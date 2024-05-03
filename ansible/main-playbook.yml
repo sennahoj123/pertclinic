@@ -4,4 +4,5 @@
   become: yes
   remote_user: azureuser
   roles:
-    - Install-tomcat
+    - Install-maven
+  
