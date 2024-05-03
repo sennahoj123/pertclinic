@@ -1,0 +1,20 @@
+---
+- name: Update APT package
+  apt:
+    update_cache: yes
+    
+- name: Download Apache Maven
+  vars:
+    myurl: "https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz"
+  tasks:
+    - name: extractor presents
+      ansible.builtin.apt:
+        name:
+          - unzip
+          - tar
+        state: present
+      become: true
+    - name: extract archive
+      ansible.builtin.unarchive:
+        src: "{{ myurl }}"
+        dest: /opt
