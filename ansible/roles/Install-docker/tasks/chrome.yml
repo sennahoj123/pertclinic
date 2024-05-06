@@ -1,0 +1,5 @@
+---
+- name: download chrome
+  get_url:
+    url: "https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz"
+    dest: /tmp/
