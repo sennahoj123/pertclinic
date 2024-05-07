@@ -1,18 +1,39 @@
 ---
-- name: Download Action runner
-  get_url:
-    url: https://github.com/actions/runner/releases/download/v2.308.0/actions-runner-linux-x64-2.308.0.tar.gz
-    dest: /tmp/
-- name: Extract runner
+- name: Create a action runner diretory
+  file:
+    path: /opt/actions-runner
+    owner: azureuser
+    group: azureuser
+    mode: 755
+    recurse: yes
+
+- name: download & unarchive github runner 
   unarchive:
-    src: /tmp/actions-runner-linux-x64-2.308.0.tar.gz
-    dest: /opt/
+    src: https://github.com/actions/runner/releases/download/v2.316.1/actions-runner-linux-x64-2.316.1.tar.gz
+    dest: /opt/actions-runner
     remote_src: yes
-- name: Set executable permissions for run.sh
-  ansible.builtin.file:
-    path: /opt/run.sh
-    owner: root
-    group: root 
-    mode: '777'
-- name: Run the runner
-  shell: /opt/run.sh
+    extra_opts: [--strip-components=1]
+
+- name: Change ownership of actions-runner directory
+  file:
+    path: /opt/actions-runner
+    owner: azureuser
+    group: azureuser
+    mode: "u+rwx,g+rx,o=rx"
+    recurse: yes
+    state: directory
+
+- name: Configure Runner
+  shell:
+    chdir: /opt/actions-runner
+    cmd: "./config.sh --url https://github.com/sennahoj123/pertclinic --token BG6T6EAZ7QFCACJOZSAE6U3GHIR2C --unattended"
+  become: false
+  become_user: "sennahoj123"
+
+- name: Run runner as service
+  shell: |
+    cd /opt/actions-runner
+    ./svc.sh install
+    ./svc.sh start
+  become: true
+
