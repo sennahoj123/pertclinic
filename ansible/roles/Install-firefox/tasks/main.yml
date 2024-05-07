@@ -1,0 +1,6 @@
+---
+- name: install firefox
+  ansible.builtin.apt:
+    name: firefox
+    state: latest
+    update_cache: yes
