@@ -4,12 +4,11 @@
   become: yes
   remote_user: azureuser
   roles:
-    #- Install-jmeter
-    - Install-github-runner
+    - Install-docker
+    - Install-maven
+    - Install-jmeter
+    #- Install-github-runner
     #- Install-tomcat
-    #- Install-openJDK
-    #- Install-selenium
-    #- Install-maven
-    #- Install-docker
-    #- Install-firefox
-  
+    - Install-openJDK
+    - Install-selenium
+    - Install-firefox
