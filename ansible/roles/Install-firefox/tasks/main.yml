@@ -4,3 +4,14 @@
     name: firefox
     state: latest
     update_cache: yes
+
+- name: Download GeckoDriver archive
+  ansible.builtin.get_url:
+    url: "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz"
+    dest: "/tmp/geckodriver-v0.34.0-linux64.tar.gz"
+
+- name: Extract GeckoDriver archive
+  ansible.builtin.unarchive:
+    src: "/tmp/geckodriver-v0.34.0-linux64.tar.gz"
+    dest: "/usr/local/bin"
+    remote_src: yes

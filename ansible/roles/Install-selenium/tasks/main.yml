@@ -1,5 +1,13 @@
 ---
-- name: Download Selenium
-  get_url:
-    url: "https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.20.0/selenium-server-4.20.0.jar"
-    dest: /tmp/
+- name: install python
+  ansible.builtin.apt:
+    name: python3-pip
+    state: latest
+    update_cache: yes
+
+- name: Install selenium
+  ansible.builtin.pip:
+    name: selenium
+    state: latest
+
+
