@@ -1,0 +1,29 @@
+---
+- name: Update apt package cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install wget and unzip
+  ansible.builtin.apt:
+    name:
+      - wget
+      - unzip
+    state: latest
+
+- name: Download Terraform binary
+  ansible.builtin.get_url:
+    url: https://releases.hashicorp.com/terraform/0.9.1/terraform_0.9.1_linux_amd64.zip
+    dest: /tmp/terraform.zip
+    mode: '0644'
+
+- name: Extract Terraform binary
+  ansible.builtin.unarchive:
+    src: /tmp/terraform.zip
+    dest: /usr/bin
+    remote_src: yes
+    mode: '0755'
+
+- name: Update apt package cache
+  ansible.builtin.apt:
+    name: azure-cli
+    state: latest
