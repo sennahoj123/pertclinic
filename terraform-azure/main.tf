@@ -45,8 +45,8 @@ resource "azurerm_network_security_rule" "az_sr" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = data.azurerm_resource_group.existing.name 
-  network_security_group_name = azurerm_network_security_group.az_sg.name 
+  resource_group_name         = data.azurerm_resource_group.existing.name
+  network_security_group_name = azurerm_network_security_group.az_sg.name
 }
 
 resource "azurerm_subnet_network_security_group_association" "az_sn" {
@@ -55,7 +55,9 @@ resource "azurerm_subnet_network_security_group_association" "az_sn" {
 }
 
 resource "azurerm_public_ip" "az_ip" {
-  name                = "iede_adu-rg-ip"
+  for_each = var.vm_map
+
+  name                = "${each.value.name}-ip"
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   allocation_method   = "Dynamic"
@@ -66,22 +68,24 @@ resource "azurerm_public_ip" "az_ip" {
 }
 
 resource "azurerm_network_interface" "az_ni" {
-  name                = "iede_adu-rg-nic"
+  for_each            = var.vm_map
+
+  name                = "${each.value.name}-ni"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
-  
+
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.az_sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.az_ip.id
+    public_ip_address_id          = azurerm_public_ip.az_ip[each.key].id
   }
 }
 
 resource "azurerm_linux_virtual_machine" "az_vm" {
   for_each = var.vm_map
 
-  name                = "${each.value.name}"
+  name                = each.value.name
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   size                = "Standard_F2"
