@@ -4,13 +4,15 @@
   become: yes
   remote_user: azureuser
   roles:
+    - main-acceptance
+
+    #- Install-openJDK
+    #- Install-terraform&azure-cli
+    #- Install-ansi
+    #- Install-firefox
+    #- Install-github-runner
     #- Install-docker
     #- Install-tomcat
     #- Install-maven
     #- Install-jmeter
-    #- Install-openJDK
     #- Install-selenium
-    #- Install-firefox
-    #- Install-github-runner
-    #- Install-ansi
-    - Install-terraform&azure-cli

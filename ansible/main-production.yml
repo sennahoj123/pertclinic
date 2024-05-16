@@ -1,0 +1,9 @@
+## playbook to execute deploy vm
+- name: install testing vm
+  hosts: Production
+  become: yes
+  remote_user: adminuser
+  roles:
+    - Install-openJDK
+    - Install-maven
+    - Install-tomcat

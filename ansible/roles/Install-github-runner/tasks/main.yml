@@ -26,7 +26,7 @@
 - name: Configure Runner
   shell:
     chdir: /opt/actions-runner
-    cmd: "./config.sh --url https://github.com/sennahoj123/pertclinic --token BG6T6EAZ7QFCACJOZSAE6U3GHIR2C --unattended"
+    cmd: "./config.sh --url https://github.com/sennahoj123/pertclinic --token BG6T6EHVPQZCQALTMUV44XLGITLV2 --unattended"
   become: false
   become_user: "sennahoj123"
 
