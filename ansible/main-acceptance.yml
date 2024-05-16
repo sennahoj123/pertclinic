@@ -1,0 +1,7 @@
+## playbook to execute selenium vm
+- name: install testing vm
+  hosts: Acceptance
+  become: yes
+  remote_user: adminuser
+  roles:
+    - Install-docker

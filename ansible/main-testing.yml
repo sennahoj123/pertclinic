@@ -1,0 +1,9 @@
+## playbook to execute jmeter vm
+- name: install testing vm
+  hosts: Testing
+  become: yes
+  remote_user: adminuser
+  roles:
+    - Install-openJDK
+    - Install-maven
+    - Install-jmeter
