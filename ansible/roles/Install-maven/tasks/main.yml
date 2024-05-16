@@ -1,6 +1,16 @@
 ---
 - name: install maven
   ansible.builtin.apt:
+    update_cache: yes
     name: maven
     state: latest
-    update_cache: yes
+
+- name: git clone pertclinic
+  shell:
+    chdir: /tmp
+    cmd: git clone https://github.com/sennahoj123/pertclinic
+
+- name: build war
+  shell:
+    chdir: /tmp/pertclinic
+    cmd: mvn clean package

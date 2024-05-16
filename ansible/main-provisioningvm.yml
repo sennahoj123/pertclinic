@@ -1,0 +1,16 @@
+## playbook to build War
+- name: install testing vm
+  hosts: provisioningvm
+  become: yes
+  remote_user: adminuser
+  roles:
+    ##- Install-openJDK
+    #- Install-terraform&azure-cli
+    #- Install-ansi
+    #- Install-firefox
+    #- Install-github-runner
+    ##- Install-docker
+    #- Install-tomcat
+    - Install-maven
+    #- Install-jmeter
+    #- Install-selenium

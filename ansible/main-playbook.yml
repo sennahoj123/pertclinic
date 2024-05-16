@@ -4,7 +4,7 @@
   become: yes
   remote_user: azureuser
   roles:
-    - main-acceptance
+    - include: main-acceptance.yml
 
     #- Install-openJDK
     #- Install-terraform&azure-cli
