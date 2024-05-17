@@ -9,9 +9,19 @@
   ansible.builtin.git:
     repo: https://github.com/sennahoj123/pertclinic
     dest: /tmp/pertclinic
-    update: no 
+    single_branch: yes
+    version: pet-iede
+    update: yes
+
+- name: Set MAVEN_OPTS environment variable
+  set_fact:
+    MAVEN_OPTS: "--add-opens java.base/java.lang=ALL-UNNAMED"
+
 
 - name: build war
   shell:
     chdir: /tmp/pertclinic
-    cmd: mvn clean package
+    cmd: mvn clean package --file pom.xml
+  environment:
+    MAVEN_OPTS: "{{ MAVEN_OPTS }}"
+
