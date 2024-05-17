@@ -6,9 +6,10 @@
     state: latest
 
 - name: git clone pertclinic
-  shell:
-    chdir: /tmp
-    cmd: git clone https://github.com/sennahoj123/pertclinic
+  ansible.builtin.git:
+    repo: https://github.com/sennahoj123/pertclinic
+    dest: /tmp/pertclinic
+    update: no 
 
 - name: build war
   shell:

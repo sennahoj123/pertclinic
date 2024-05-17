@@ -18,13 +18,9 @@
     #- Install-tomcat
     #- Install-maven
     #- Install-jmeter
-<<<<<<< HEAD
-    #- Install-selenium
-=======
     #- Install-openJDK
     #- Install-selenium
     #- Install-firefox
     #- Install-github-runner
     #- Install-ansi
     - Install-terraform&azure-cli
->>>>>>> 4aea94c3317a8680f54bd1fd9b612075212d2e0f

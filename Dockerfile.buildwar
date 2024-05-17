@@ -1,6 +1,0 @@
-from alpine:3.18
-
-run apk update
-
-run mvn -B package --file pom.xml
-
