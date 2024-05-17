@@ -4,4 +4,14 @@
   become: yes
   remote_user: adminuser
   roles:
+    - Install-tomcat
+    - Install-openJDK
+    - Install-maven
+    - Install-jmeter
+    # - Install-terraform&azure-cli
+    # - Install-ansi
+    - Install-firefox
+    # - Install-github-runner
     - Install-docker
+    - Install-selenium
+    - Install-firefox

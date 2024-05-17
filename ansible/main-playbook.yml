@@ -4,7 +4,6 @@
   become: yes
   remote_user: azureuser
   roles:
-<<<<<<< HEAD
     - include: main-acceptance.yml
 
     #- Install-openJDK
@@ -12,8 +11,6 @@
     #- Install-ansi
     #- Install-firefox
     #- Install-github-runner
-=======
->>>>>>> 4aea94c3317a8680f54bd1fd9b612075212d2e0f
     #- Install-docker
     #- Install-tomcat
     #- Install-maven

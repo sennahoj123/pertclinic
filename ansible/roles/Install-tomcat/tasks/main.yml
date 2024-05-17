@@ -57,16 +57,8 @@
       [Install]
       WantedBy=multi-user.target
   
-<<<<<<< HEAD
 - name: Start and Enable Tomcat on server
   ansible.builtin.systemd:
     name: tomcat.service
     state: started
     daemon_reload: yes
-=======
-- name: Start and Enable Tomcat on sever
-  ansible.builtin.systemd_service:
-    name: tomcat
-    state: started
-    daemon_reload: true
->>>>>>> 4aea94c3317a8680f54bd1fd9b612075212d2e0f
