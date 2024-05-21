@@ -10,4 +10,18 @@
     name: selenium
     state: latest
 
+- name: Install Node.js (if not already installed)
+  ansible.builtin.package:
+    name: nodejs
+    state: present
 
+- name: Install npm (if not already installed)
+  ansible.builtin.package:
+    name: npm
+    state: present
+
+- name: Install Selenium Side Runner
+  npm:
+    name: selenium-side-runner
+    global: yes
+    state: present

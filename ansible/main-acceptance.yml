@@ -4,7 +4,6 @@
   become: yes
   remote_user: adminuser
   roles:
-    - Install-tomcat
     - Install-openJDK
     - Install-maven
     - Install-jmeter
@@ -15,3 +14,45 @@
     - Install-docker
     - Install-selenium
     - Install-firefox
+    - Install-tomcat
+
+  tasks:
+    - name: Copy PetclinicSeleniumTest.side to tmp folder
+      copy: 
+        src: /home/iede/petclinic/pertclinic/PetclinicSeleniumTest.side
+        dest: /tmp/PetclinicSeleniumTest.side
+
+    - name: Run Selenium test
+      shell: |
+        cd /tmp
+        selenium-side-runner PetclinicSeleniumTest.side
+
+
+    - name: Set MAVEN_OPTS environment variable
+      set_fact:
+        MAVEN_OPTS: "--add-opens java.base/java.lang=ALL-UNNAMED"
+
+    - name: Build WAR file
+      shell:
+        cmd: mvn clean package --file /tmp/pertclinic/pom.xml
+        chdir: /tmp/pertclinic
+      environment:
+        MAVEN_OPTS: "{{ MAVEN_OPTS }}"
+    
+      register: maven_build_result
+      ignore_errors: true
+
+    - name: Check if the WAR file exists
+      stat:
+        path: "/tmp/pertclinic/target/petclinic.war"        
+      register: war_file_status
+      failed_when: false
+      when: maven_build_result is succeeded
+
+    - name: Copy WAR file to Tomcat webapps directory
+      command: cp /tmp/pertclinic/target/petclinic.war /opt/tomcat/webapps/
+
+    - name: Pull the JMeter Docker image
+      community.docker.docker_image:
+        name: iede/jmeter:v1.0
+        source: pull

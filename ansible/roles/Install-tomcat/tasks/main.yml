@@ -36,7 +36,6 @@
     state: directory
 
 - name: Creating a service file
-  become: yes
   copy:
     dest: /etc/systemd/system/tomcat.service 
     content: |
@@ -44,21 +43,28 @@
       Description=Tomcat Service
       Requires=network.target
       After=network.target
+
       [Service]
       Type=forking
       User=tomcat
-      Environment="CATALINA_PID=/opt/tomcat/logs/tomcat.pid"
-      Environment="CATALINA_BASE=/opt/tomcat"
+      Group=tomcat
+      Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64"
+      Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
       Environment="CATALINA_HOME=/opt/tomcat"
+      Environment="CATALINA_BASE=/opt/tomcat"
       Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+      Environment="JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
       ExecStart=/opt/tomcat/bin/startup.sh
       ExecStop=/opt/tomcat/bin/shutdown.sh
       Restart=on-abnormal
+
       [Install]
       WantedBy=multi-user.target
   
 - name: Start and Enable Tomcat on server
   ansible.builtin.systemd:
-    name: tomcat.service
+    name: tomcat
     state: started
+    enabled: yes
+    become: yes
     daemon_reload: yes
