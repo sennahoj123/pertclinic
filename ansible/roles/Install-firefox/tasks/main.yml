@@ -1,5 +1,4 @@
----
-- name: install firefox
+- name: Download Firefox installer
   ansible.builtin.apt:
     name: firefox
     state: latest
@@ -7,11 +6,13 @@
 
 - name: Download GeckoDriver archive
   ansible.builtin.get_url:
-    url: "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz"
-    dest: "/tmp/geckodriver-v0.34.0-linux64.tar.gz"
+    url: "https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz"
+    dest: "/tmp/geckodriver-v0.33.0-linux64.tar.gz"
+    mode: "0777"
 
 - name: Extract GeckoDriver archive
   ansible.builtin.unarchive:
-    src: "/tmp/geckodriver-v0.34.0-linux64.tar.gz"
+    src: "/tmp/geckodriver-v0.33.0-linux64.tar.gz"
     dest: "/usr/local/bin"
     remote_src: yes
+  become: yes

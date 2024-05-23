@@ -24,20 +24,20 @@
 - name: Install nvm
   ansible.builtin.shell: |
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-  args:
-    executable: /bin/bash
-  environment:
-    HOME: "{{ ansible_env.HOME }}"
-    USER: "{{ ansible_env.USER }}"
+    . ~/.bashrc
+  become: yes
 
 - name: Load nvm and install Node.js
   ansible.builtin.shell: |
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    npm install -g selenium-side-runner
-  args:
-    executable: /bin/bash
-become: yes
+    . ~/.bashrc
+    nvm install 16
+    nvm use 16
+    nvm alias default 16
+  become: yes
+  environment:
+    NVM_DIR: "{{ ansible_env.HOME }}/.nvm"
+    USER: "{{ ansible_env.USER }}"
+    HOME: "{{ ansible_env.HOME }}"
 
 - name: Install Selenium Side Runner
   ansible.builtin.shell: 
@@ -48,4 +48,4 @@ become: yes
   ansible.builtin.file:
     path: /tmp/pertclinic/reports
     state: directory
-    mode: '0755'
+    mode: '0777'

@@ -43,8 +43,9 @@
 
     - name: Run Selenium test with Firefox
       ansible.builtin.shell: 
-        selenium-side-runner --capabilities "browserName=firefox,moz:firefoxOptions.args=['-headless']" --output-directory "/tmp/pertclinic" "/tmp/pertclinic/PetclinicSeleniumTest.side"
+        cmd: selenium-side-runner --output-directory "/tmp/pertclinic/reports" --headless "/tmp/pertclinic/PetclinicSeleniumTestFirefox.side"
       register: selenium_test
+      become: yes
       ignore_errors: yes
 
     - name: Print selenium-side-runner output
