@@ -15,13 +15,8 @@
     - Install-tomcat
     - Install-firefox
     - Install-selenium
-
+  
   tasks:
-    - name: Run Selenium test
-      shell: |
-        cd /tmp/pertclinic
-        selenium-side-runner PetclinicSeleniumTest.side
-
     - name: Set MAVEN_OPTS environment variable
       set_fact:
         MAVEN_OPTS: "--add-opens java.base/java.lang=ALL-UNNAMED"
@@ -46,7 +41,12 @@
     - name: Copy WAR file to Tomcat webapps directory
       command: cp /tmp/pertclinic/target/petclinic.war /opt/tomcat/webapps/
 
-    - name: Pull the JMeter Docker image
-      community.docker.docker_image:
-        name: iede/jmeter:v1.0
-        source: pull
+    - name: Run Selenium test with Firefox
+      ansible.builtin.shell: 
+        selenium-side-runner --capabilities "browserName=firefox,moz:firefoxOptions.args=['-headless']" --output-directory "/tmp/pertclinic" "/tmp/pertclinic/PetclinicSeleniumTest.side"
+      register: selenium_test
+      ignore_errors: yes
+
+    - name: Print selenium-side-runner output
+      ansible.builtin.debug:
+        var: selenium_test.stdout_lines

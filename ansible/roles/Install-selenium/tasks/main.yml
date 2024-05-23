@@ -15,8 +15,37 @@
     state: latest
     update_cache: yes
 
-- name: Install Selenium Side Runner
-  npm:
-    name: selenium-side-runner
-    global: yes
+- name: Install curl
+  ansible.builtin.apt:
+    name: curl
     state: latest
+    update_cache: yes
+
+- name: Install nvm
+  ansible.builtin.shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  args:
+    executable: /bin/bash
+  environment:
+    HOME: "{{ ansible_env.HOME }}"
+    USER: "{{ ansible_env.USER }}"
+
+- name: Load nvm and install Node.js
+  ansible.builtin.shell: |
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    npm install -g selenium-side-runner
+  args:
+    executable: /bin/bash
+become: yes
+
+- name: Install Selenium Side Runner
+  ansible.builtin.shell: 
+    cmd: npm install -g selenium-side-runner
+  become: yes
+
+- name: Create reports directory
+  ansible.builtin.file:
+    path: /tmp/pertclinic/reports
+    state: directory
+    mode: '0755'
