@@ -88,7 +88,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   name                = each.value.name
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
-  size                = "Standard_F2"
+  size                = "Standard_B2s"
   admin_username      = "adminuser"
   network_interface_ids = [
     azurerm_network_interface.az_ni[each.key].id
@@ -106,8 +106,8 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 }

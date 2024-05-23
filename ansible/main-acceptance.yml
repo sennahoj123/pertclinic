@@ -12,21 +12,15 @@
     - Install-firefox
     # - Install-github-runner
     - Install-docker
-    - Install-selenium
-    - Install-firefox
     - Install-tomcat
+    - Install-firefox
+    - Install-selenium
 
   tasks:
-    - name: Copy PetclinicSeleniumTest.side to tmp folder
-      copy: 
-        src: /home/iede/petclinic/pertclinic/PetclinicSeleniumTest.side
-        dest: /tmp/PetclinicSeleniumTest.side
-
     - name: Run Selenium test
       shell: |
-        cd /tmp
+        cd /tmp/pertclinic
         selenium-side-runner PetclinicSeleniumTest.side
-
 
     - name: Set MAVEN_OPTS environment variable
       set_fact:

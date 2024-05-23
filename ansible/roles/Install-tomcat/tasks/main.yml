@@ -66,5 +66,5 @@
     name: tomcat
     state: started
     enabled: yes
-    become: yes
-    daemon_reload: yes
+    state: started
+    daemon_reload: true

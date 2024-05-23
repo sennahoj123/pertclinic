@@ -1,5 +1,4 @@
----
-- name: install python
+- name: Install python3-pip
   ansible.builtin.apt:
     name: python3-pip
     state: latest
@@ -10,18 +9,14 @@
     name: selenium
     state: latest
 
-- name: Install Node.js (if not already installed)
-  ansible.builtin.package:
-    name: nodejs
-    state: present
-
-- name: Install npm (if not already installed)
-  ansible.builtin.package:
+- name: Install npm
+  ansible.builtin.apt:
     name: npm
-    state: present
+    state: latest
+    update_cache: yes
 
 - name: Install Selenium Side Runner
   npm:
     name: selenium-side-runner
     global: yes
-    state: present
+    state: latest
