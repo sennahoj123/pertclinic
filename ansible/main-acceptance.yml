@@ -43,8 +43,7 @@
 
     - name: Run Selenium test with Firefox
       ansible.builtin.shell: 
-        cmd: selenium-side-runner --webdriver /usr/local/bin/geckodriver -c --output-directory "/tmp/pertclinic/reports" "/tmp/pertclinic/PetclinicSeleniumTest.side"
-
+        cmd: selenium-side-runner PetclinicSeleniumTestFirefox.side
       register: selenium_test
       become: yes
 

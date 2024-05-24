@@ -252,7 +252,7 @@
     "tests": ["7f559be7-4c45-424e-b2d3-529655b940c2"]
   }],
   "urls": ["http://20.107.126.190:8080/"],
-  "plugins": []
+  "plugins": [],
   "capabilities": [
     {
       "browserName": "firefox"
