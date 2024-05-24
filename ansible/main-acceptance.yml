@@ -6,12 +6,12 @@
   roles:
     - Install-openJDK
     - Install-maven
-    - Install-jmeter
+    #- Install-jmeter
     # - Install-terraform&azure-cli
     # - Install-ansi
     - Install-firefox
     # - Install-github-runner
-    - Install-docker
+    #- Install-docker
     - Install-tomcat
     - Install-firefox
     - Install-selenium
@@ -43,10 +43,10 @@
 
     - name: Run Selenium test with Firefox
       ansible.builtin.shell: 
-        cmd: selenium-side-runner --output-directory "/tmp/pertclinic/reports" --headless "/tmp/pertclinic/PetclinicSeleniumTestFirefox.side"
+        cmd: selenium-side-runner --webdriver /usr/local/bin/geckodriver -c --output-directory "/tmp/pertclinic/reports" "/tmp/pertclinic/PetclinicSeleniumTest.side"
+
       register: selenium_test
       become: yes
-      ignore_errors: yes
 
     - name: Print selenium-side-runner output
       ansible.builtin.debug:

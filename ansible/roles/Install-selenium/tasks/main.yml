@@ -1,13 +1,21 @@
-- name: Install python3-pip
+- name: Install Python 3
+  ansible.builtin.apt:
+    name: python3
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: Install pip for Python 3
   ansible.builtin.apt:
     name: python3-pip
     state: latest
     update_cache: yes
+  become: yes
 
 - name: Install selenium
-  ansible.builtin.pip:
-    name: selenium
-    state: latest
+  ansible.builtin.shell:
+    cmd: pip3 install selenium --break-system-packages
+
 
 - name: Install npm
   ansible.builtin.apt:
@@ -30,14 +38,8 @@
 - name: Load nvm and install Node.js
   ansible.builtin.shell: |
     . ~/.bashrc
-    nvm install 16
-    nvm use 16
-    nvm alias default 16
-  become: yes
-  environment:
-    NVM_DIR: "{{ ansible_env.HOME }}/.nvm"
-    USER: "{{ ansible_env.USER }}"
-    HOME: "{{ ansible_env.HOME }}"
+    nvm install 20
+    nvm use 20
 
 - name: Install Selenium Side Runner
   ansible.builtin.shell: 
