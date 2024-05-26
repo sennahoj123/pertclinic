@@ -1,0 +1,23 @@
+- name: Download chrome Version 125.0.6422.78 (r1287751)
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.78/linux64/chrome-linux64.zip
+    dest: /tmp/chrome-linux64.zip
+    mode: '0644'
+
+- name: Unzip chrome
+  ansible.builtin.unarchive:
+    src: /tmp/chrome-linux64.zip
+    dest: /opt
+    remote_src: yes
+
+- name: Download chromedriver Version 125.0.6422.78 (r1287751)
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.78/linux64/chromedriver-linux64.zip
+    dest: /tmp/chromedriver-linux64.zip
+    mode: '0644'
+
+- name: Unzip chromedriver
+  ansible.builtin.unarchive:
+    src: /tmp/chromedriver-linux64.zip
+    dest: /opt
+    remote_src: yes

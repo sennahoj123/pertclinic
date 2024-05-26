@@ -13,7 +13,7 @@
     # - Install-github-runner
     #- Install-docker
     - Install-tomcat
-    - Install-firefox
+    - Install-chrome
     - Install-selenium
   
   tasks:
