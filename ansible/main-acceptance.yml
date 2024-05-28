@@ -51,7 +51,3 @@
         cmd: python3 /home/adminuser/pertclinic/selenium_test.py 
       register: selenium_test
       become: yes
-
-    - name: Print selenium-side-runner output
-      ansible.builtin.debug:
-        var: selenium_test.stdout_lines

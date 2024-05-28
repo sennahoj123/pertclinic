@@ -4,13 +4,13 @@
   become: yes
   remote_user: adminuser
   roles:
-    ##- Install-openJDK
-    #- Install-terraform&azure-cli
-    #- Install-ansi
-    #- Install-firefox
-    #- Install-github-runner
-    ##- Install-docker
-    #- Install-tomcat
+    - Install-openJDK
     - Install-maven
     #- Install-jmeter
-    #- Install-selenium
+    # - Install-terraform&azure-cli
+    # - Install-ansi
+    - Install-chrome
+    #- Install-github-runner
+    #- Install-docker
+    - Install-tomcat
+    - Install-selenium

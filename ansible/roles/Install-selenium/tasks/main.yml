@@ -2,28 +2,17 @@
   apt:
     update_cache: yes
 
-- name: Install nodejs and npm and unzip
-  apt:
-    name: [nodejs, npm, unzip]
-    state: present
-
-- name: Install Google Chrome
-  apt:
-    name: google-chrome-stable
-    state: present
-
-- name: Download Google Chrome Driver
-  get_url:
-    url: "https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.78/linux64/chrome-headless-shell-linux64.zip"
-    dest: /tmp/chromedriver.zip
-
-- name: Unzip Chrome Driver
-  unarchive:
-    src: /tmp/chromedriver.zip
-    dest: /usr/local/bin
-    remote_src: yes
+- name: install Python3
+  shell:
+    cmd: |
+    install python3 --break-system-packages
+    install python3 -pip --break-system-packages
 
 - name: Install Selenium Side Runner
   npm:
     name: selenium-side-runner
     global: yes
+
+- name: install Python3
+  shell:
+    cmd: pip3 install selenium
