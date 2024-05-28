@@ -10,11 +10,10 @@
     # - Install-terraform&azure-cli
     # - Install-ansi
     - Install-chrome
-    # - Install-github-runner
+    #- Install-github-runner
     #- Install-docker
     - Install-tomcat
     - Install-selenium
-
   
   tasks:
     - name: Set MAVEN_OPTS environment variable
@@ -46,27 +45,10 @@
     - name: Copy WAR file to Tomcat webapps directory
       ansible.builtin.shell:
         cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war 
-
-    - name: Create Selenium configuration file
-      ansible.builtin.copy:
-        dest: /opt/pertclinic/selenium-config.js
-        content: |
-          module.exports = {
-            baseUrl: 'http://localhost:8080',
-            browserName: 'chrome',
-            browserOptions: [
-              '--headless',
-              '--no-sandbox',
-              '--disable-dev-shm-usage',
-              '--remote-debugging-port=9222',
-              '--disable-gpu',
-              '--binary=/usr/bin/google-chrome'
-            ]
-          };
-
+    
     - name: Run Selenium test with chrome
       ansible.builtin.shell: 
-        cmd: selenium-side-runner /opt/pertclinic/selenium-config.js /opt/pertclinic/PetclinicSeleniumTest.side
+        cmd: python3 /home/adminuser/pertclinic/selenium_test.py 
       register: selenium_test
       become: yes
 

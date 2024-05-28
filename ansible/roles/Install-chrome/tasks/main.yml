@@ -1,12 +1,8 @@
-- name: Update Ubuntu package index
-  ansible.builtin.apt:
-    update_cache: yes
-  tags: update
 
-- name: Upgrade Ubuntu packages
-  ansible.builtin.apt:
-    upgrade: dist
-  tags: upgrade
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present
 
 - name: Download Google Chrome
   ansible.builtin.get_url:
@@ -19,3 +15,14 @@
     deb: /tmp/google-chrome-stable_current_amd64.deb
     state: present
   tags: chrome
+
+- name: Download Google Chrome Driver
+  get_url:
+    url: "https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.78/linux64/chrome-headless-shell-linux64.zip"
+    dest: /tmp/chromedriver.zip
+
+- name: Unzip Chrome Driver
+  unarchive:
+    src: /tmp/chromedriver.zip
+    dest: /usr/local/bin
+    remote_src: yes

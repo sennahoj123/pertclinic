@@ -2,9 +2,9 @@
   apt:
     update_cache: yes
 
-- name: Install nodejs and npm
+- name: Install nodejs and npm and unzip
   apt:
-    name: [nodejs, npm]
+    name: [nodejs, npm, unzip]
     state: present
 
 - name: Install Google Chrome
