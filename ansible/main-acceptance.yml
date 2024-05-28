@@ -9,12 +9,12 @@
     #- Install-jmeter
     # - Install-terraform&azure-cli
     # - Install-ansi
-    - Install-firefox
+    - Install-chrome
     # - Install-github-runner
     #- Install-docker
     - Install-tomcat
-    - Install-chrome
     - Install-selenium
+
   
   tasks:
     - name: Set MAVEN_OPTS environment variable
@@ -23,27 +23,50 @@
 
     - name: Build WAR file
       shell:
-        cmd: mvn clean package --file /tmp/pertclinic/pom.xml
-        chdir: /tmp/pertclinic
+        cmd: mvn clean package --file /opt/pertclinic/pom.xml
+        chdir: /opt/pertclinic
       environment:
         MAVEN_OPTS: "{{ MAVEN_OPTS }}"
+
+    - name: Set permissions for the WAR file
+      ansible.builtin.file:
+        path: /opt/pertclinic/target/petclinic.war
+        mode: '0777'
     
       register: maven_build_result
       ignore_errors: true
 
     - name: Check if the WAR file exists
       stat:
-        path: "/tmp/pertclinic/target/petclinic.war"        
+        path: "/opt/pertclinic/target/petclinic.war"        
       register: war_file_status
       failed_when: false
       when: maven_build_result is succeeded
 
     - name: Copy WAR file to Tomcat webapps directory
-      command: cp /tmp/pertclinic/target/petclinic.war /opt/tomcat/webapps/
+      ansible.builtin.shell:
+        cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war 
 
-    - name: Run Selenium test with Firefox
+    - name: Create Selenium configuration file
+      ansible.builtin.copy:
+        dest: /opt/pertclinic/selenium-config.js
+        content: |
+          module.exports = {
+            baseUrl: 'http://localhost:8080',
+            browserName: 'chrome',
+            browserOptions: [
+              '--headless',
+              '--no-sandbox',
+              '--disable-dev-shm-usage',
+              '--remote-debugging-port=9222',
+              '--disable-gpu',
+              '--binary=/usr/bin/google-chrome'
+            ]
+          };
+
+    - name: Run Selenium test with chrome
       ansible.builtin.shell: 
-        cmd: selenium-side-runner PetclinicSeleniumTestFirefox.side
+        cmd: selenium-side-runner /opt/pertclinic/selenium-config.js /opt/pertclinic/PetclinicSeleniumTest.side
       register: selenium_test
       become: yes
 

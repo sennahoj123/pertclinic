@@ -5,13 +5,16 @@
     name: maven
     state: latest
 
-- name: git clone pertclinic
+- name: Clone the pertclinic repository
   ansible.builtin.git:
     repo: https://github.com/sennahoj123/pertclinic
-    dest: /tmp/pertclinic
+    dest: /opt/pertclinic
     single_branch: yes
     version: pet-iede
     update: yes
     force: yes
 
+- name: Set ownership of the pertclinic directory to adminuser
+  ansible.builtin.command:
+    cmd: chown -R adminuser:adminuser /opt/pertclinic
 

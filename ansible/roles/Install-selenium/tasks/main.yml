@@ -1,53 +1,29 @@
-- name: Install Python 3
-  ansible.builtin.apt:
-    name: python3
-    state: latest
-    update_cache: yes
-  become: yes
-
-- name: Install pip for Python 3
-  ansible.builtin.apt:
-    name: python3-pip
-    state: latest
-    update_cache: yes
-  become: yes
-
-- name: Install selenium
-  ansible.builtin.shell:
-    cmd: pip3 install selenium --break-system-packages
-
-
-- name: Install npm
-  ansible.builtin.apt:
-    name: npm
-    state: latest
+- name: Update apt package cache
+  apt:
     update_cache: yes
 
-- name: Install curl
-  ansible.builtin.apt:
-    name: curl
-    state: latest
-    update_cache: yes
+- name: Install nodejs and npm
+  apt:
+    name: [nodejs, npm]
+    state: present
 
-- name: Install nvm
-  ansible.builtin.shell: |
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-    . ~/.bashrc
-  become: yes
+- name: Install Google Chrome
+  apt:
+    name: google-chrome-stable
+    state: present
 
-- name: Load nvm and install Node.js
-  ansible.builtin.shell: |
-    . ~/.bashrc
-    nvm install 20
-    nvm use 20
+- name: Download Google Chrome Driver
+  get_url:
+    url: "https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.78/linux64/chrome-headless-shell-linux64.zip"
+    dest: /tmp/chromedriver.zip
+
+- name: Unzip Chrome Driver
+  unarchive:
+    src: /tmp/chromedriver.zip
+    dest: /usr/local/bin
+    remote_src: yes
 
 - name: Install Selenium Side Runner
-  ansible.builtin.shell: 
-    cmd: npm install -g selenium-side-runner
-  become: yes
-
-- name: Create reports directory
-  ansible.builtin.file:
-    path: /tmp/pertclinic/reports
-    state: directory
-    mode: '0777'
+  npm:
+    name: selenium-side-runner
+    global: yes
