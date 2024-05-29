@@ -3,27 +3,38 @@
   ansible.builtin.apt:
     update_cache: yes
 
-- name: Install wget and unzip
+- name: Install necessary dependencies
   ansible.builtin.apt:
     name:
+      - ca-certificates
+      - curl
+      - apt-transport-https
+      - lsb-release
+      - gnupg
+      - snapd
       - wget
       - unzip
-    state: latest
+    state: present
+  become: yes
 
-- name: Download Terraform binary
-  ansible.builtin.get_url:
-    url: https://releases.hashicorp.com/terraform/0.9.1/terraform_0.9.1_linux_amd64.zip
-    dest: /tmp/terraform.zip
-    mode: '0644'
+- name: Install Terraform using snap
+  ansible.builtin.shell: sudo snap install terraform --classic
+  become: yes
 
-- name: Extract Terraform binary
-  ansible.builtin.unarchive:
-    src: /tmp/terraform.zip
-    dest: /usr/bin
-    remote_src: yes
-    mode: '0755'
+- name: Add Microsoft signing key
+  ansible.builtin.shell: |
+    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+  become: yes
 
-- name: Update apt package cache
+- name: Add Azure CLI repository
+  ansible.builtin.shell: |
+    AZ_REPO=$(lsb_release -cs)
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+  become: yes
+
+- name: Update apt cache and install Azure CLI
   ansible.builtin.apt:
+    update_cache: yes
     name: azure-cli
-    state: latest
+    state: present
+  become: yes

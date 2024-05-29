@@ -5,16 +5,25 @@
     name: maven
     state: latest
 
+- name: Install git
+  apt:
+    name: git
+    state: present
+  become: yes
+
 - name: Clone the pertclinic repository
   ansible.builtin.git:
     repo: https://github.com/sennahoj123/pertclinic
     dest: /opt/pertclinic
     single_branch: yes
-    version: pet-iede
     update: yes
     force: yes
 
-- name: Set ownership of the pertclinic directory to adminuser
-  ansible.builtin.command:
-    cmd: chown -R adminuser:adminuser /opt/pertclinic
-
+- name: Set permissions recursively
+  ansible.builtin.file:
+    path: /opt/pertclinic
+    owner: azureuser
+    group: azureuser
+    recurse: yes
+    state: directory
+  become: yes

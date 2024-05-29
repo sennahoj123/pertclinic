@@ -26,9 +26,10 @@
 - name: Configure Runner
   shell:
     chdir: /opt/actions-runner
-    cmd: "./config.sh --url https://github.com/sennahoj123/pertclinic --token BG6T6EHVPQZCQALTMUV44XLGITLV2 --unattended"
+    cmd: "./config.sh --url https://github.com/sennahoj123/pertclinic --token BG6T6EDFWJGJCXY3KBEO3MLGKYA52 --unattended --labels iede, ubuntu, provisioningvm "
   become: false
   become_user: "sennahoj123"
+  ignore_errors: yes
 
 - name: Run runner as service
   shell: |
