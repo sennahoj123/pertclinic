@@ -1,2 +1,19 @@
-terraform-azure/
-terraform-azure-provisioningvm/
+# Ignore Terraform directories and files in terraform-azure directory
+terraform-azure/.terraform/
+terraform-azure/*.tfstate
+terraform-azure/*.tfstate.*
+terraform-azure/crash.log
+terraform-azure/.terraform.lock.hcl
+terraform-azure/.terraform.tfstate.backup
+terraform-azure/terraform.tfstate
+terraform-azure/terraform.tfstate.backup
+
+# Ignore Terraform directories and files in terraform-azure-provisioningvm directory
+terraform-azure-provisioningvm/.terraform/
+terraform-azure-provisioningvm/*.tfstate
+terraform-azure-provisioningvm/*.tfstate.*
+terraform-azure-provisioningvm/crash.log
+terraform-azure-provisioningvm/.terraform.lock.hcl
+terraform-azure-provisioningvm/.terraform.tfstate.backup
+terraform-azure-provisioningvm/terraform.tfstate
+terraform-azure-provisioningvm/terraform.tfstate.backup
