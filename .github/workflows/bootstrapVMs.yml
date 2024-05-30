@@ -7,20 +7,13 @@ jobs:
     runs-on: iede
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: run terraform
+      - name: terraform
         run: |
           cd terraform-azure-provisioningvm
           terraform init
           terraform plan
-          terraform -auto-appove
-
-      
-      - name: where am I
-        run: |
-          pwd
-          ls -la
-      - name: run testing playbook
+          terraform apply -auto-approve
+          
+      - name: testing playbook
         run: ansible-playbook -i hosts ansible/main-testing.yml
         
