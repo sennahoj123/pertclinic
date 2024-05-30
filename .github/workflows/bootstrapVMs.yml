@@ -23,7 +23,7 @@ jobs:
           terraform plan
           terraform -auto-appove
 
-      
+
       - name: where am I
         run: |
           pwd
