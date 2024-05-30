@@ -13,7 +13,7 @@
 
 - name: Clone the pertclinic repository
   ansible.builtin.git:
-    repo: https://github.com/sennahoj123/pertclinic
+    repo: https://github.com/sennahoj123/pertclinic/tree/pet-iede
     dest: /opt/pertclinic
     single_branch: yes
     update: yes
@@ -22,8 +22,8 @@
 - name: Set permissions recursively
   ansible.builtin.file:
     path: /opt/pertclinic
-    owner: azureuser
-    group: azureuser
+    owner: adminuser
+    group: adminuser
     recurse: yes
     state: directory
   become: yes

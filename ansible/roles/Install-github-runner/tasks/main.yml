@@ -2,8 +2,8 @@
 - name: Create a action runner diretory
   file:
     path: /opt/actions-runner
-    owner: azureuser
-    group: azureuser
+    owner: adminuser
+    group: adminuser
     mode: 755
     recurse: yes
 
@@ -17,8 +17,8 @@
 - name: Change ownership of actions-runner directory
   file:
     path: /opt/actions-runner
-    owner: azureuser
-    group: azureuser
+    owner: adminuser
+    group: adminuser
     mode: "u+rwx,g+rx,o=rx"
     recurse: yes
     state: directory
@@ -26,7 +26,7 @@
 - name: Configure Runner
   shell:
     chdir: /opt/actions-runner
-    cmd: "./config.sh --url https://github.com/sennahoj123/pertclinic --token BG6T6EDFWJGJCXY3KBEO3MLGKYA52 --unattended --labels iede, ubuntu, provisioningvm "
+    cmd: "./config.sh --url https://github.com/sennahoj123/pertclinic --token BG6T6ED3LCZG7IMKONZZCLDGLBWDS --unattended --labels iede, ubuntu, provisioningvm "
   become: false
   become_user: "sennahoj123"
   ignore_errors: yes
