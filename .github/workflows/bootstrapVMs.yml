@@ -7,14 +7,6 @@ jobs:
     runs-on: iede
     
     steps:
-      - name : Check Az version before installing
-        run: az --version
-      - name: 'Az CLI login with subscription'
-        run: az login --user ${{ secrets.USER_NAME }} --password ${{ secrets.PASWORD }}
-          
-      - run: |
-          az account show --output none
-
       - name: terraform
         run: |
           cd terraform-azure-provisioningvm
