@@ -11,7 +11,7 @@ jobs:
         run: |
           cd terraform-azure-provisioningvm
           pwd
-          ll
+          ls -la
       - name: terraform init
         run: terraform init
       - name: terraform plan
