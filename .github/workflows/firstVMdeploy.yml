@@ -1,16 +1,16 @@
 name: build provisioningVM
-on:
-  push:
+on: push
 
 jobs:
-  maven-build:
+  build-VM:
     name: Build provisioningVM
-    runs-on: local runner
+    runs-on: self-hosted
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Where am I
-        run: pwd
+      - name: change dir
+        run: cd /home/iede/petclinic/pertclinic/terraform-azure-provisioningvm
       - name: Run terraform init
         run: terraform init
       - name: Run terraform plan
