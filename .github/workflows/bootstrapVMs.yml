@@ -13,6 +13,8 @@ jobs:
         run: |
           pwd
           ls -la
+          cd ansible
+          ls -la
       - name: run testing playbook
         run: ansible-playbook -i hosts /ansible/main-provisioningvm.yml
         
