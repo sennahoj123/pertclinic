@@ -9,6 +9,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: where am I
+        run: |
+          pwd
+          ls -la
       - name: run testing playbook
         run: ansible-playbook -i hosts /home/iede/petclinic/pertclinic/ansible/main-provisioningvm.yml
         
