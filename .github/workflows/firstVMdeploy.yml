@@ -7,13 +7,13 @@ jobs:
     name: Build provisioningVM
     runs-on: local runner
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: where am I
+      - name: Where am I
         run: pwd
-      - name: run terraform init
+      - name: Run terraform init
         run: terraform init
-      - name: run terraform plan
+      - name: Run terraform plan
         run: terraform plan
-      - name: run terraform apply -auto-approve
+      - name: Run terraform apply -auto-approve
         run: terraform apply -auto-approve
