@@ -1,11 +1,11 @@
 name: build provisioningVM
-on:
-  push:
+on: push
 
 jobs:
-  maven-build:
+  build-VM:
     name: Build provisioningVM
-    runs-on: local runner
+    runs-on: self-hosted
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
