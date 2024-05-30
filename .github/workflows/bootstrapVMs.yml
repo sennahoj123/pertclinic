@@ -7,23 +7,13 @@ jobs:
     runs-on: iede
     
     steps:
-      - name: chdir terraform
+      - name: terraform
         run: |
           cd terraform-azure-provisioningvm
-          pwd
-          ls -la
-      - name: terraform init
-        run: terraform init
-      - name: |
-          pwd
+          terraform init
           terraform plan
-        run: terraform plan
-      - name: terraform apply
-        run: terraform apply -auto-appove
-      - name: where am I
-        run: |
-          pwd
-          ls -la
+          terraform apply -auto-appove
+          
       - name: testing playbook
         run: ansible-playbook -i hosts ansible/main-testing.yml
         
