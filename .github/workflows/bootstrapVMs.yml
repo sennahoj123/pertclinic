@@ -4,7 +4,7 @@ on: push
 jobs:
   build-VM:
     name: Build provisioningVM
-    runs-on: ProvisioningVM
+    runs-on: iede
     
     steps:
       - name: Checkout code
