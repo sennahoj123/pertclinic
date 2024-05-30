@@ -7,14 +7,14 @@ jobs:
     runs-on: iede
     
     steps:
-      - name: terraform
-        run: |
-          cd terraform-azure-provisioningvm
-          terraform init
-          terraform plan
-          terraform -auto-appove
-
-
+      - name: chdir terraform
+        run: cd terraform-azure-provisioningvm
+      - name: terraform init
+        run: terraform init
+      - name: terraform plan
+        run: terraform plan
+      - name: terraform apply
+        run: terraform apply -auto-appove
       - name: where am I
         run: |
           pwd
