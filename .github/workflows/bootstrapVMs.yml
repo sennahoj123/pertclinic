@@ -1,0 +1,26 @@
+name: build provisioningVM
+on: push
+
+jobs:
+  build-VM:
+    name: Build provisioningVM
+    runs-on: iede
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: run terraform
+        run: |
+          cd terraform-azure-provisioningvm
+          terraform init
+          terraform plan
+          terraform -auto-appove
+
+      
+      - name: where am I
+        run: |
+          pwd
+          ls -la
+      - name: run testing playbook
+        run: ansible-playbook -i hosts ansible/main-testing.yml
+        
