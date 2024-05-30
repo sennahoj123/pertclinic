@@ -10,7 +10,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: change dir
-        run: cd /terraform-azure-provisioningvm
+        run: cd /home/iede/petclinic/pertclinic/terraform-azure-provisioningvm
       - name: Run terraform init
         run: terraform init
       - name: Run terraform plan
