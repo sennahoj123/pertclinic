@@ -9,6 +9,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: run terraform
+        run: |
+          cd terraform-azure-provisioningvm
+          terraform init
+          terraform plan
+          terraform -auto-appove
+
+      
       - name: where am I
         run: |
           pwd
