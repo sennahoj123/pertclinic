@@ -30,10 +30,9 @@
   - name: Set permissions for the WAR file
     ansible.builtin.file:
       path: /opt/pertclinic/target/petclinic.war
-      owner: azureuser  
-      group: azureuser
+      owner: adminuser  
+      group: adminuser
       mode: '0777'
-  
     register: maven_build_result
     ignore_errors: true
 
