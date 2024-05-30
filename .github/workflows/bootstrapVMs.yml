@@ -1,0 +1,11 @@
+name: build provisioningVM
+on: push
+
+jobs:
+  build-VM:
+    name: Build provisioningVM
+    runs-on: ProvisioningVM
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
