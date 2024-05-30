@@ -14,9 +14,11 @@
 - name: Clone the pertclinic repository
   ansible.builtin.git:
     repo: https://github.com/sennahoj123/pertclinic.git
-    dest: /pertclinic
-    version: pet-iede
-
+    dest: /opt/pertclinic
+    version: origin/pet-iede
+    update: yes
+    force: yes
+    
 - name: Set permissions recursively
   ansible.builtin.file:
     path: /opt/pertclinic
