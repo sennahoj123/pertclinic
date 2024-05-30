@@ -5,7 +5,7 @@ on:
 jobs:
   maven-build:
     name: Build provisioningVM
-    runs-on: provisioningvm
+    runs-on: local runner
     steps:
       - name: checkout code
         uses: actions/checkout@v4
