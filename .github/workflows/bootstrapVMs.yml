@@ -8,7 +8,10 @@ jobs:
     
     steps:
       - name: chdir terraform
-        run: cd terraform-azure-provisioningvm
+        run: |
+          cd terraform-azure-provisioningvm
+          pwd
+          ll
       - name: terraform init
         run: terraform init
       - name: terraform plan
