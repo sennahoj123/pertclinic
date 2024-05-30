@@ -12,7 +12,7 @@ jobs:
           cd terraform-azure-provisioningvm
           terraform init
           terraform plan
-          terraform apply -auto-appove
+          terraform apply -auto-approve
           
       - name: testing playbook
         run: ansible-playbook -i hosts ansible/main-testing.yml
