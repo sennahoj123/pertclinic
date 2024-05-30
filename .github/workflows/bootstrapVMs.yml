@@ -15,13 +15,7 @@ jobs:
           
       - run: |
           az account show --output none
-          
-      - run: |
-          az account show --output none
-      - name: azure cli login
-        run: az login --user ${{ secrets.USER_NAME }} --password ${{ secrets.PASWORD }}
-      - name: Checkout code
-        uses: actions/checkout@v4
+
       - name: run terraform
         run: |
           cd terraform-azure-provisioningvm
