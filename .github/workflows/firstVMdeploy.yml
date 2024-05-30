@@ -9,8 +9,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Where am I
-        run: pwd
+      - name: change dir
+        run: cd /terraform-azure-provisioningvm
       - name: Run terraform init
         run: terraform init
       - name: Run terraform plan
