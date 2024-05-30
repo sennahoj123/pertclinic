@@ -7,6 +7,20 @@ jobs:
     runs-on: iede
     
     steps:
+      - name : Check Az version before installing
+        run: az --version
+      - name: 'Az CLI login with subscription'
+        uses: azure/login@v2
+        run: az login --user ${{ secrets.USER_NAME }} --password ${{ secrets.PASWORD }}
+          
+      - run: |
+          az account show --output none
+          
+          
+      - run: |
+          az account show --output none
+      - name: azure cli login
+        run: az login --user ${{ secrets.USER_NAME }} --password ${{ secrets.PASWORD }}
       - name: Checkout code
         uses: actions/checkout@v4
       - name: run terraform
