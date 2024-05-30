@@ -90,7 +90,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("~/.ssh/github_rsa.pub")
+    public_key = file("/home/iede/.ssh/id_rsa_ansible.pub")
   }
 
   os_disk {
