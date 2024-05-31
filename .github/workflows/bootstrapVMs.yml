@@ -10,19 +10,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: terraform
-        run: |
-          cd /opt/pertclinic/terraform-azure
-          pwd
-          ls -la
-
       - name: Terraform Init
         run: |
-          pwd
+          cd terraform-azure
           terraform init
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: |
+          cd terraform-azure
+          terraform apply -auto-approve
 
       - name: Output Public IP Addressesvim
         run: terraform output -json > ip_addresses.json
