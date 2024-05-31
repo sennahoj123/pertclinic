@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: terraform
         run: |
-          cd terraform-azure-provisioningvm
+          cd terraform-azure
           terraform init
           terraform plan
           terraform apply -auto-approve
