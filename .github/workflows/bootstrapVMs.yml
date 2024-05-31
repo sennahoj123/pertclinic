@@ -8,7 +8,7 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: terraform
         run: cd /opt/pertclinic/terraform-azure
@@ -30,12 +30,7 @@ jobs:
       - name: Generate Ansible Inventory
         run: ./generate_inventory.sh ip_addresses.json > hosts
 
-      - name: Run Ansible Playbook
-        uses: appleboy/ansible-action@v2
-        with:
-          playbook: main-testing.yml
-          inventory: hosts
-        env:
-          ANSIBLE_SSH_PRIVATE_KEY: ${{ secrets.SSH }}
+      - name: testing playbook
+        run: ansible-playbook -i hosts /opt/pertclinic/ansible/main-testing.yml
 
         
