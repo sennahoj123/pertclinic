@@ -17,7 +17,9 @@ jobs:
           ls -la
 
       - name: Terraform Init
-        run: terraform init
+        run: |
+          pwd
+          terraform init
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
