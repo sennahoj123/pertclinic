@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: terraform
         run: |
-          cd
+          cd /opt/pertclinic/terraform-azure
           pwd
           cd terraform-azure
           terraform init
