@@ -31,5 +31,4 @@ jobs:
 
       - name: testing playbook
         run: ansible-playbook -i hosts /opt/pertclinic/ansible/main-testing.yml
-
       
