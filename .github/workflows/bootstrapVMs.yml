@@ -9,6 +9,7 @@ jobs:
     steps:
       - name: terraform
         run: |
+          pwd
           cd terraform-azure
           terraform init
           terraform plan
