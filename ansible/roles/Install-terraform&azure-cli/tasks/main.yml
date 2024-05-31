@@ -38,9 +38,3 @@
     name: azure-cli
     state: present
   become: yes
-
-- name: azure CLI login 
-  shell:
-    cmd: |
-      az login
-      az login --user <username> --password <password>
