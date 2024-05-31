@@ -21,10 +21,10 @@ jobs:
           terraform apply -auto-approve
 
       - name: Output Public IP Addressesvim
-        run: terraform output -json > ip_addresses.json
+        run: terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
 
       - name: Generate Ansible Inventory
-        run: ./generate_inventory.sh ip_addresses.json > hosts
+        run: /opt/pertclinic/terraform-azure/generate_inventory.sh ip_addresses.json > hosts
 
       - name: testing playbook
         run: ansible-playbook -i hosts /opt/pertclinic/ansible/main-testing.yml
