@@ -13,11 +13,6 @@ jobs:
       - name: terraform
         run: cd /opt/pertclinic/terraform-azure
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 3.0.0
-
       - name: Terraform Init
         run: terraform init
 
