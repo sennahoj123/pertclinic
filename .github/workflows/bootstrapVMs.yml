@@ -15,5 +15,5 @@ jobs:
           terraform apply -auto-approve
           
       - name: testing playbook
-        run: ansible-playbook -i hosts ansible/main-testing.yml
+        run: ansible-playbook -i hosts /opt/pertclinic/ansible/main-testing.yml
         
