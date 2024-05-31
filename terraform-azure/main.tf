@@ -96,7 +96,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("~/.ssh/{{ secrets.SSH }}")
+    public_key = file("~/.ssh/id_rsa.pub")
   }
 
   os_disk {
@@ -110,4 +110,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
     sku       = "server"
     version   = "latest"
   }
+}
+output "public_ip_address" {
+  value = azurerm_public_ip.az_ip.ip_address
 }
