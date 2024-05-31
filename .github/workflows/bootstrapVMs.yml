@@ -10,8 +10,6 @@ jobs:
       - name: terraform
         run: |
           cd /opt/pertclinic/terraform-azure
-          pwd
-          cd terraform-azure
           terraform init
           terraform plan
           terraform apply -auto-approve
