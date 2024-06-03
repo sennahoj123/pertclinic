@@ -1,4 +1,3 @@
----
 - name: Update apt package cache
   ansible.builtin.apt:
     update_cache: yes
@@ -13,10 +12,20 @@
     state: latest
     update_cache: true
 
+- name: Debug - Check network connectivity
+  ansible.builtin.debug:
+    msg: "Testing connectivity to Docker GPG key URL"
+  # Add tasks here to test network connectivity, e.g., ping or curl
+  
 - name: Add signing key
   ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
+
+- name: Debug - Check GPG key presence
+  ansible.builtin.debug:
+    msg: "Verifying if Docker GPG key is present in the keyring"
+  # Add tasks here to list GPG keys and check if Docker key is present
 
 - name: Add Docker repository
   ansible.builtin.apt_repository:

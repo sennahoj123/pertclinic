@@ -43,3 +43,23 @@
   shell:
     cmd: sudo apt-get install -y jq
 
+- name: Update apt package cache and install jq
+  shell:
+    cmd: sudo apt-get install -y jq
+
+- name: Update apt repositories
+  ansible.builtin.shell: sudo apt update
+  become: yes
+
+- name: Install python3-pip
+  ansible.builtin.shell: sudo apt install -y python3-pip
+  become: yes
+
+- name: Upgrade Ansible using pip3
+  ansible.builtin.shell: sudo pip3 install ansible --upgrade
+  become: yes
+
+- name: Install six module
+  ansible.builtin.shell: pip3 install six
+  become: yes
+
