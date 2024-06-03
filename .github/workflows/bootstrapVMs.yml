@@ -11,24 +11,34 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Terraform Init
-        run: |
-          cd terraform-azure
-          terraform init
+        working-directory: terraform-azure
+        run: terraform init
 
       - name: Terraform Apply
-        run: |
-          cd terraform-azure
-          terraform apply -auto-approve
+        working-directory: terraform-azure
+        run: terraform apply -auto-approve
 
-      - name: Output Public IP Addressesvim
+      - name: Output Public IP Addresses
+        working-directory: terraform-azure
         run: terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
 
-      - name: change permisions
-        run: chmod +x /opt/pertclinic/terraform-azure/generate_inventory.sh
+      - name: Check IP Addresses File
+        run: cat /opt/pertclinic/terraform-azure/ip_addresses.json
 
-      - name: Generate Ansible Inventory
-        run: /opt/pertclinic/terraform-azure/generate_inventory.sh ip_addresses.json > hosts
+      - name: Change Permissions for Update Hosts Script
+        working-directory: terraform-azure
+        run: chmod +x generate_inventory.sh
 
-      - name: testing playbook
-        run: ansible-playbook -i hosts /opt/pertclinic/ansible/main-testing.yml
+      - name: Update Hosts File
+        run: /opt/pertclinic/terraform-azure/generate_inventory.sh /opt/pertclinic/terraform-azure/ip_addresses.json
+
+      - name: Check Updated Hosts File
+        run: cat /opt/pertclinic/terraform-azure/hosts
+
+      - name: Testing Playbook
+        run: ansible-playbook -i /opt/pertclinic/terraform-azure/hosts /opt/pertclinic/ansible/main-testing.yml
+
+      - name: Testing Playbook
+        run: ansible-playbook -i /opt/pertclinic/terraform-azure/hosts /opt/pertclinic/ansible/main-testing.yml
+
       
