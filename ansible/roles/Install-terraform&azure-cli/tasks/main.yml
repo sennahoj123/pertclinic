@@ -38,3 +38,8 @@
     name: azure-cli
     state: present
   become: yes
+
+- name: Update apt package cache and install jq
+  shell:
+    cmd: sudo apt-get install -y jq
+
