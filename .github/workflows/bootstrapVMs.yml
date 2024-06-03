@@ -30,7 +30,7 @@ jobs:
         run: chmod +x generate_inventory.sh
 
       - name: Update Hosts File
-        run: /opt/pertclinic/generate_inventory.sh /opt/pertclinic/terraform-azure/ip_addresses.json
+        run: /opt/pertclinic/terraform-azure/generate_inventory.sh /opt/pertclinic/terraform-azure/ip_addresses.json
 
       - name: Check Updated Hosts File
         run: cat /opt/pertclinic/terraform-azure/hosts
