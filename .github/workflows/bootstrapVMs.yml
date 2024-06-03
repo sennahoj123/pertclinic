@@ -29,6 +29,9 @@ jobs:
       - name: Generate Ansible Inventory
         run: /opt/pertclinic/terraform-azure/generate_inventory.sh ip_addresses.json > hosts
 
+      - name: check host file
+        run: cat hosts
+
       - name: testing playbook
         run: ansible-playbook -i hosts /opt/pertclinic/ansible/main-testing.yml
       
