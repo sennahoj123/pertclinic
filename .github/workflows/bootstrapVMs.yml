@@ -30,6 +30,9 @@ jobs:
 
       - name: Check Updated Hosts File
         run: cat /opt/pertclinic/ansible/hosts
+        
+      - name: check connection
+        run: ansible all -i hosts -u adminuser -m command -a "uptime"
 
       - name: Testing Playbook
         run: ansible-playbook -i  /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
