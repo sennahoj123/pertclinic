@@ -27,10 +27,10 @@ jobs:
 
       - name: Change Permissions for Update Hosts Script
         working-directory: terraform-azure
-        run: chmod +x generate_inventory.sh
+        run: chmod +x ip_input.py
 
       - name: Update Hosts File
-        run: /opt/pertclinic/terraform-azure/generate_inventory.sh /opt/pertclinic/terraform-azure/ip_addresses.json
+        run: python3 /opt/pertclinic/terraform-azure/ip_input.py
 
       - name: Check Updated Hosts File
         run: cat /opt/pertclinic/terraform-azure/hosts
@@ -38,7 +38,8 @@ jobs:
       - name: Testing Playbook
         run: ansible-playbook -i /opt/pertclinic/terraform-azure/hosts /opt/pertclinic/ansible/main-testing.yml
 
-      - name: Testing Playbook
-        run: ansible-playbook -i /opt/pertclinic/terraform-azure/hosts /opt/pertclinic/ansible/main-testing.yml
+      - name: Acceptance Playbook
+        run: ansible-playbook -i /opt/pertclinic/terraform-azure/hosts /opt/pertclinic/ansible/main-acceptance.yml
 
-      
+      - name: Production Playbook
+        run: ansible-playbook -i /opt/pertclinic/terraform-azure/hosts /opt/pertclinic/ansible/main-production.yml
