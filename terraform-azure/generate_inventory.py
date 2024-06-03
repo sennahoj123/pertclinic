@@ -1,5 +1,5 @@
-import json
 import os
+import json
 
 # Absolute path to the ip_addresses.json file
 json_file_path = '/opt/pertclinic/terraform-azure/ip_addresses.json'
@@ -16,20 +16,20 @@ with open(json_file_path) as f:
 # Define the template for hosts file
 hosts_template = """
 [Testing]
-{vm1} ansible_host={vm1_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
+{vm1_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
 
 [Acceptance]
-{vm2} ansible_host={vm2_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
+{vm2_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
 
 [Production]
-{vm3} ansible_host={vm3_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
+{vm3_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
 """
 
 # Update hosts file with Terraform IP addresses
 hosts_content = hosts_template.format(
-    vm1='vm1', vm1_ip=ip_addresses['vm1'],
-    vm2='vm2', vm2_ip=ip_addresses['vm2'],
-    vm3='vm3', vm3_ip=ip_addresses['vm3']
+    vm1_ip=ip_addresses['vm1'],
+    vm2_ip=ip_addresses['vm2'],
+    vm3_ip=ip_addresses['vm3']
 )
 
 # Write updated hosts content to the hosts file
