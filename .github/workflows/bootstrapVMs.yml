@@ -23,6 +23,9 @@ jobs:
       - name: Output Public IP Addressesvim
         run: terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
 
+      - name: check host file
+        run: cat ip_addresses.json
+
       - name: change permisions
         run: chmod +x /opt/pertclinic/terraform-azure/generate_inventory.sh
 
