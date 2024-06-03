@@ -3,7 +3,7 @@ on: push
 
 jobs:
   build-VM:
-    name: Build provisioningVM
+    name: Setup and Configure VM
     runs-on: iede
     
     steps:
@@ -31,11 +31,17 @@ jobs:
       - name: Check Updated Hosts File
         run: cat /opt/pertclinic/ansible/hosts
         
-      - name: check connection
+      - name: Check connection
         run: ansible all -i /opt/pertclinic/ansible/hosts -u adminuser -m command -a "uptime"
 
+  deploy-VM:
+    name: Bootstrap Application on VMs
+    runs-on: iede
+    #needs: build-VM
+    
+    steps:
       - name: Testing Playbook
-        run: ansible-playbook -i  /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
+        run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
 
       - name: Acceptance Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-acceptance.yml
