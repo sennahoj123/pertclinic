@@ -1,7 +1,16 @@
 import json
+import os
+
+# Absolute path to the ip_addresses.json file
+json_file_path = '/opt/pertclinic/terraform-azure/ip_addresses.json'
+
+# Check if the json file exists
+if not os.path.exists(json_file_path):
+    print("Error: ip_addresses.json file not found.")
+    exit(1)
 
 # Load Terraform output from ip_addresses.json
-with open('ip_addresses.json') as f:
+with open(json_file_path) as f:
     ip_addresses = json.load(f)['public_ip_addresses']['value']
 
 # Define the template for hosts file
@@ -24,7 +33,7 @@ hosts_content = hosts_template.format(
 )
 
 # Write updated hosts content to the hosts file
-with open('/opt/pertclinic/ansible/hosts', 'w') as f:
+with open('/opt/pertclinic/terraform-azure/hosts', 'w') as f:
     f.write(hosts_content)
 
 print("Hosts file updated successfully.")
