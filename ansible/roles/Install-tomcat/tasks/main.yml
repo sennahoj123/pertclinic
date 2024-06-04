@@ -15,18 +15,24 @@
     path: /opt/tomcat
     owner: tomcat
     group: tomcat
-    mode: 755
+    mode: "0755"
     recurse: yes
 
-- name: download & unarchive tomcat
-  unarchive:
-    src: https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz
+- name: Download Tomcat archive
+  ansible.builtin.shell:
+    cmd: wget -O /tmp/apache-tomcat-9.0.54.tar.gz https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz
+  args:
+    creates: /tmp/apache-tomcat-9.0.54.tar.gz
+
+- name: Extract Tomcat archive
+  ansible.builtin.unarchive:
+    src: /tmp/apache-tomcat-9.0.54.tar.gz
     dest: /opt/tomcat
     remote_src: yes
     extra_opts: [--strip-components=1]
 
-- name: Change ownership of tomcat directory
-  file:
+- name: Change ownership of Tomcat directory
+  ansible.builtin.file:
     path: /opt/tomcat
     owner: tomcat
     group: tomcat
@@ -34,8 +40,16 @@
     recurse: yes
     state: directory
 
+- name: Ensure Tomcat scripts are executable
+  ansible.builtin.file:
+    path: /opt/tomcat/bin/{{ item }}
+    mode: "0755"
+  loop:
+    - startup.sh
+    - shutdown.sh
+
 - name: Creating a service file
-  copy:
+  ansible.builtin.copy:
     dest: /etc/systemd/system/tomcat.service 
     content: |
       [Unit]
@@ -55,11 +69,13 @@
 
       [Install]
       WantedBy=multi-user.target
-  
+
+- name: Reload systemd to recognize the Tomcat service
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
 - name: Start and Enable Tomcat on server
   ansible.builtin.systemd:
     name: tomcat
     state: started
     enabled: yes
-    state: started
-    daemon_reload: true

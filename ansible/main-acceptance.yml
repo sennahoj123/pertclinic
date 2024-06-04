@@ -7,8 +7,8 @@
     - Install-openJDK
     - Install-maven
     #- Install-jmeter
-    # - Install-terraform&azure-cli
-    # - Install-ansi
+    #- Install-terraform&azure-cli
+    #- Install-ansi
     - Install-chrome
     #- Install-github-runner
     #- Install-docker
