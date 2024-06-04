@@ -37,7 +37,7 @@ jobs:
   deploy-VM:
     name: Bootstrap Application on VMs
     runs-on: iede
-    #needs: build-VM
+    needs: build-VM
     
     steps:
       - name: Testing Playbook
