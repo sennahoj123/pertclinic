@@ -18,9 +18,10 @@
   # Add tasks here to test network connectivity, e.g., ping or curl
   
 - name: Add signing key
-  ansible.builtin.apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
+  ansible.builtin.shell:
+    cmd: wget https://download.docker.com/linux/ubuntu/gpg
     state: present
+    validate_certs: no
 
 - name: Debug - Check GPG key presence
   ansible.builtin.debug:
