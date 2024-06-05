@@ -30,13 +30,17 @@
 
 - name: Download Google Chrome Driver
   ansible.builtin.shell:
-    cmd: wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.141/linux64/chromedriver-linux64.zip
+    cmd: wget -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.141/linux64/chromedriver-linux64.zip
 
 - name: Unzip Chrome Driver
   unarchive:
-    src: /tmp/chromedriver-linux64.zip
-    dest: /usr/bin
+    src: /tmp/chromedriver.zip
+    dest: /tmp/
     remote_src: yes
+
+- name: Move Chrome Driver to /usr/bin
+  ansible.builtin.command:
+    cmd: mv /tmp/chromedriver-linux64/chromedriver /usr/bin/chromedriver
 
 - name: Ensure chromedriver is executable
   file:
