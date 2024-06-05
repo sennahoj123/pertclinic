@@ -48,6 +48,8 @@
     
     - name: Run Selenium test with chrome
       ansible.builtin.shell: 
-        cmd: python3 /home/adminuser/pertclinic/selenium_test.py 
+        cmd: 
+        - pwd
+        - python3 selenium_test.py 
       register: selenium_test
       become: yes
