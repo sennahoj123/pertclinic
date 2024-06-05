@@ -1,6 +1,11 @@
 - name: Update apt package cache
   ansible.builtin.apt:
     update_cache: yes
+
+- name: Install Python 3
+  ansible.builtin.apt:
+    name: python3
+    state: present
     
 - name: install apt-transport-https
   ansible.builtin.apt:

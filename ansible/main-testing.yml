@@ -31,32 +31,33 @@
       ansible.builtin.file:
         path: /opt/pertclinic/target/petclinic.war
         mode: '0777'
-    
+
       register: maven_build_result
       ignore_errors: true
 
     - name: Check if the WAR file exists
       stat:
-        path: "/opt/pertclinic/target/petclinic.war"        
+        path: "/opt/pertclinic/target/petclinic.war"
       register: war_file_status
       failed_when: false
       when: maven_build_result is succeeded
 
     - name: Copy WAR file to Tomcat webapps directory
       ansible.builtin.shell:
-        cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war 
-    
+        cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war
+
     - name: Pull the JMeter Docker image
       community.docker.docker_image:
         name: iede/jmeter:v1.0
         source: pull
+      become: yes
 
     - name: Run the JMeter Docker container
       community.docker.docker_container:
         name: jmeter
         image: iede/jmeter:v1.0
         state: started
-        ports: 
+        ports:
           - "9090:8080"
         volumes:
-          - "/opt:/opt/apache-jmeter-5.6.3/bin/results" 
+          - "/opt:/opt/apache-jmeter-5.6.3/bin/results"
