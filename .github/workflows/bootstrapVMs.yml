@@ -48,7 +48,7 @@ jobs:
     
     steps:
       - name: Testing Playbook
-        run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml -vvv
+        run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
 
       - name: Acceptance Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-acceptance.yml
