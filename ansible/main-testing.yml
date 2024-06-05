@@ -57,7 +57,8 @@
         
     - name: remove jmeter 
       shell: sudo docker rm jmeter
-        
+      
     - name: Run the JMeter Docker 
       shell: sudo docker run -d --name jmeter -p 9090:8080 -v /opt:/opt/apache-jmeter-5.6.3/bin/results iede/jmeter:v1.0
+
 
