@@ -52,7 +52,7 @@
         source: pull
       become: yes
 
-    - name: Run the JMeter Docker container
+    - name: Run the JMeter Docker 
       shell: |
         sudo docker stop jmeter
         sudo docker rm jmeter
