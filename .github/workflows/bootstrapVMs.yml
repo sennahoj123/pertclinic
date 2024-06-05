@@ -48,6 +48,12 @@ jobs:
     steps:
       - name: Testing Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
+      - name: Upload Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: jmeter-results
+          path: result.jtl
+          if-no-files-found: error
   
   acceptance-VM:
     name: Bootstrap acceptance
