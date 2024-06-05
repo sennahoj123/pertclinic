@@ -22,6 +22,11 @@
       - python3-venv
     state: present
 
+- name: install selenium
+    shell:
+        cmd: pip install selenium --break-system-packages
+
+
 - name: Install Selenium Side Runner
   npm:
     name: selenium-side-runner
