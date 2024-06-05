@@ -53,10 +53,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-results
-          path: /testresultsiede.jtl
+          path: /opt/testresultsiede.jtl
           if-no-files-found: error
 
-  
   acceptance-VM:
     name: Bootstrap acceptance
     runs-on: iede
