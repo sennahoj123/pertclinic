@@ -11,6 +11,23 @@
     state: present
   become: yes
 
+- name: change permission
+  file:
+    path: /opt
+    owner: adminuser
+    group: adminuser
+    mode: "0755"
+    recurse: yes
+    
+- name: Change ownership of opt directory
+ansible.builtin.file:
+  path: /opt
+  owner: adminuser
+  group: adminuser
+  mode: "u+rwx,g+rx,o=rx"
+  recurse: yes
+  state: directory
+
 - name: Clone the pertclinic repository
   ansible.builtin.git:
     repo: https://github.com/sennahoj123/pertclinic.git
