@@ -47,38 +47,31 @@
         cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war
 
     - name: Pull the JMeter Docker image
-      community.docker.docker_image:
-        name: iede/jmeter:v1.0
-        source: pull
+      ansible.builtin.shell:
+        cmd: docker pull iede/jmeter:v1.0
       become: yes
 
     - name: Check if jmeter container exists
-      community.docker.docker_container_info:
-        name: jmeter
-      register: jmeter_info
+      ansible.builtin.shell:
+        cmd: docker ps -a -q -f name=jmeter
+      register: jmeter_container_id
       failed_when: false
-  
+
     - name: Stop jmeter container if it exists
-      community.docker.docker_container:
-        name: jmeter
-        state: stopped
-      when: jmeter_info.containers | length > 0
+      ansible.builtin.shell:
+        cmd: docker stop jmeter
+      when: jmeter_container_id.stdout != ""
       ignore_errors: yes
 
     - name: Remove jmeter container if it exists
-      community.docker.docker_container:
-        name: jmeter
-        state: absent
-      when: jmeter_info.containers | length > 0
+      ansible.builtin.shell:
+        cmd: docker rm jmeter
+      when: jmeter_container_id.stdout != ""
       ignore_errors: yes
 
     - name: Run the JMeter Docker container
-      community.docker.docker_container:
-        name: jmeter
-        image: iede/jmeter:v1.0
-        state: started
-        ports:
-          - "9090:8080"
-        volumes:
-          - /opt:/opt/apache-jmeter-5.6.3/bin/results
+      ansible.builtin.shell:
+        cmd: docker run -d --name jmeter -p 9090:8080 -v /opt:/opt/apache-jmeter-5.6.3/bin/results iede/jmeter:v1.0
       become: yes
+
+
