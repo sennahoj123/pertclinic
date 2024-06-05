@@ -73,5 +73,11 @@
       ansible.builtin.shell:
         cmd: docker run -d --name jmeter -p 9090:8080 -v /opt:/opt/apache-jmeter-5.6.3/bin/results iede/jmeter:v1.0
       become: yes
+     
+    - name: Change ownership of the JTL file
+      ansible.builtin.command:
+        cmd: sudo chown adminuser:adminuser /opt/apache-jmeter-5.6.3/bin/results/testresultsiede.jtl
+      become: yes
+
 
 
