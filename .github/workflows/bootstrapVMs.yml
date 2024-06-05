@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-results
-          path: /opt/testresultsiede.jtl
+          path: /testresultsiede.jtl
           if-no-files-found: error
 
   
