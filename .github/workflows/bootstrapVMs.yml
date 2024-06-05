@@ -2,7 +2,7 @@ name: build provisioningVM
 on: push
 
 jobs:
-  build-VM:
+  build-VMs:
     name: Setup and Configure VM
     runs-on: iede
     
@@ -41,17 +41,26 @@ jobs:
       - name: Check connection
         run: ansible all -i /opt/pertclinic/ansible/hosts -u adminuser -m command -a "uptime"
 
-  deploy-VM:
-    name: Bootstrap Application on VMs
+  testing-VM:
+    name: Bootstrap testing
     runs-on: iede
-    needs: build-VM
-    
+    needs: build-VMs
     steps:
       - name: Testing Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
-
+  
+  acceptance-VM:
+    name: Bootstrap acceptance
+    runs-on: iede
+    needs: testing-VM
+    steps:
       - name: Acceptance Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-acceptance.yml
-
+  
+  production-VM:
+    name: Bootstrap production
+    runs-on: iede
+    needs: acceptance-VM
+    steps:
       - name: Production Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-production.yml
