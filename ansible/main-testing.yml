@@ -53,5 +53,8 @@
       become: yes
 
     - name: Run the JMeter Docker container
-      shell:
-        cmd: sudo docker run -d --name jmeter -p 9090:8080 -v /opt:/opt/apache-jmeter-5.6.3/bin/results iede/jmeter:v1.0
+      shell: |
+        sudo docker stop jmeter
+        sudo docker rm jmeter
+        sudo docker run -d --name jmeter -p 9090:8080 -v /opt:/opt/apache-jmeter-5.6.3/bin/results iede/jmeter:v1.0
+
