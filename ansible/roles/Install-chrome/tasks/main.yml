@@ -14,6 +14,9 @@
   file:
     path: /tmp
     state: directory
+    owner: adminuser
+    group: adminuser
+    recurse: yes
 
 - name: Download Google Chrome
   ansible.builtin.shell:
@@ -27,10 +30,15 @@
 
 - name: Download Google Chrome Driver
   ansible.builtin.shell:
-    cmd: wget -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.78/linux64/chrome-headless-shell-linux64.zip
+    cmd: wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.141/linux64/chromedriver-linux64.zip
 
 - name: Unzip Chrome Driver
   unarchive:
-    src: /tmp/chromedriver.zip
-    dest: /usr/local/bin
+    src: /tmp/chromedriver-linux64.zip
+    dest: /usr/bin
     remote_src: yes
+
+- name: Ensure chromedriver is executable
+  file:
+    path: /usr/bin/chromedriver
+    mode: '0755'
