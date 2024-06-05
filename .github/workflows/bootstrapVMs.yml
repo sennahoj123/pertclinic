@@ -48,8 +48,10 @@ jobs:
     steps:
       - name: Testing Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
-      - name: Change permission and ownership of the file
-        run: sudo chmod adminuser:adminuser /opt/testresultsiede.jtl
+     
+      - name: Change ownership of the file
+        run: sudo chown adminuser:adminuser /opt/testresultsiede.jtl
+
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
