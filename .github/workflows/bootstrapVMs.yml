@@ -16,9 +16,6 @@ jobs:
           echo "Host *" > /home/adminuser/.ssh/config
           echo "  StrictHostKeyChecking no" >> /home/adminuser/.ssh/config
 
-      - name: rm git repo
-        run: sudo rm -r /opt/pertclinic 
-
       - name: Clone repo
         run: sudo git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
 
@@ -76,6 +73,9 @@ jobs:
     steps:
       - name: Production Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-production.yml
+      
+      - name: rm git repo
+        run: sudo rm -r /opt/pertclinic 
 
   Destoy-Terraform:
     name: Terraforn Destroy
