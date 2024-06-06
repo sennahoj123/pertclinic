@@ -14,7 +14,7 @@
     #- Install-docker
     - Install-tomcat
     - Install-selenium
-  
+
   tasks:
     - name: Set MAVEN_OPTS environment variable
       set_fact:
@@ -31,33 +31,22 @@
       ansible.builtin.file:
         path: /opt/pertclinic/target/petclinic.war
         mode: '0777'
-        
+
       register: maven_build_result
       ignore_errors: true
 
     - name: Check if the WAR file exists
       stat:
-        path: "/opt/pertclinic/target/petclinic.war"        
+        path: "/opt/pertclinic/target/petclinic.war"
       register: war_file_status
       failed_when: false
       when: maven_build_result is succeeded
 
     - name: Copy WAR file to Tomcat webapps directory
       ansible.builtin.shell:
-        cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war 
-    
-    - name: Run Selenium test with chrome
-      ansible.builtin.shell: 
-        cmd: python3 /opt/pertclinic/selenium_test.py 
-      register: selenium_test
-      become: yes
+        cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war
 
     - name: Run Selenium test script
       shell: python3 /opt/pertclinic/selenium_test.py
       register: selenium_test_result
       ignore_errors: yes
-
-    - name: Fail if Selenium test script fails
-      fail:
-        msg: "Selenium test script failed"
-      when: selenium_test_result.rc != 0

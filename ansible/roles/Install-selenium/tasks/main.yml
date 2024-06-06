@@ -1,6 +1,5 @@
----
 - name: Update apt package cache
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
 
 - name: Install prerequisites for Node.js
@@ -24,17 +23,26 @@
   register: node_version_check
   failed_when: node_version_check.rc != 0
 
-- name: update package
-  shell:
-    cmd: sudo apt update
+- name: Install Python 3
+  ansible.builtin.apt:
+    name: python3
+    state: present
 
-- name: Install Python3 and pip
-  shell:
-    cmd: sudo apt-get install python-pip
+- name: Install pip for Python 3
+  ansible.builtin.apt:
+    name: python3-pip
+    state: present
+
+- name: Check if selenium is already installed
+  command: pip3 show selenium
+  register: selenium_installed
+  ignore_errors: yes
 
 - name: Install selenium using pip
-  shell:
-    cmd: sudo pip install selenium
+  pip:
+    name: selenium
+    state: present
+  when: selenium_installed.rc != 0
 
 - name: Install Selenium Side Runner
   npm:
