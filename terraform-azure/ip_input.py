@@ -1,7 +1,7 @@
 import json
 
 # Load Terraform output from ip_addresses.json
-with open('ip_addresses.json') as f:
+with open('/opt/pertclinic/terraform-azure/ip_addresses.json') as f:
     ip_addresses = json.load(f)['public_ip_addresses']['value']
 
 # Define the template for hosts file
