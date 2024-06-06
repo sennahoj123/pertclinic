@@ -17,7 +17,7 @@ jobs:
           echo "  StrictHostKeyChecking no" >> /home/adminuser/.ssh/config
 
       - name: Clone repo
-        run: sudo git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
+        run: sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
 
       - name: Terraform Init
         working-directory: terraform-azure
