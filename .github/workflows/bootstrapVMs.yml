@@ -16,6 +16,12 @@ jobs:
           echo "Host *" > /home/adminuser/.ssh/config
           echo "  StrictHostKeyChecking no" >> /home/adminuser/.ssh/config
 
+      - name: Create directory for repo
+        run: sudo mkdir -p /opt/pertclinic
+      
+      - name: Set ownership of directory
+        run: sudo chown adminuser:adminuser /opt/pertclinic
+      
       - name: Clone repo
         run: sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
 
