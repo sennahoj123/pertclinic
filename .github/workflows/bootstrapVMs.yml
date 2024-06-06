@@ -71,3 +71,12 @@ jobs:
     steps:
       - name: Production Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-production.yml
+
+  Destoy-Terraform:
+    name: Terraforn Destroy
+    runs-on: iede
+    needs: production-VM
+    steps:
+      - name: Terraform Init
+        working-directory: terraform-azure
+        run: terraform destroy-auto-approve
