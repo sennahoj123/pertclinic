@@ -51,11 +51,7 @@
         cmd: sudo docker pull iede/jmeter:v1.0
 
     - name: Run the JMeter Docker container
-      community.docker.docker_container:
-        name: jmeter
-        image: iede/jmeter:v1.0
-        state: started
-        ports:
-          - "9090:8080"
-        volumes:
-          - "/opt:/opt/apache-jmeter-5.6.3/bin/results"
+      ansible.builtin.shell:
+        cmd: "docker run -d --name jmeter -p 9090:8080 -v /opt:/opt/apache-jmeter-5.6.3/bin/results iede/jmeter:v1.0"
+      become: yes
+
