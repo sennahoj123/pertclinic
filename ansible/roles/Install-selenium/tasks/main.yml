@@ -3,23 +3,23 @@
     update_cache: yes
 
 - name: Install prerequisites for Node.js
-  apt:
-    name:
-      - curl
+  ansible.builtin.apt:
+    name: curl
     state: present
+  become: yes
 
 - name: Add Node.js 20 repository
   ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
   become: yes
 
 - name: Install Node.js 20
-  apt:
+  ansible.builtin.apt:
     name: nodejs
     state: present
   become: yes
 
 - name: Ensure Node.js was installed
-  command: node --version
+  ansible.builtin.command: node --version
   register: node_version_check
   failed_when: node_version_check.rc != 0
 
@@ -27,17 +27,22 @@
   ansible.builtin.apt:
     name: python3
     state: present
+  become: yes
 
 - name: Install pip for Python 3
   ansible.builtin.apt:
     name: python3-pip
     state: present
+  become: yes
 
 - name: Install selenium using pip
-  shell:
-    cmd: pip3 install selenium
+  ansible.builtin.pip:
+    name: selenium
+    executable: pip3
 
 - name: Install Selenium Side Runner
-  npm:
+  ansible.builtin.npm:
     name: selenium-side-runner
     global: yes
+    state: present
+  become: yes
