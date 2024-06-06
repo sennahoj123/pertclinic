@@ -46,6 +46,16 @@
       ansible.builtin.shell:
         cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war
 
+    - name: Remove previous JMeter Docker container if exists
+      ansible.builtin.shell:
+        cmd: "docker rm -f jmeter || true"
+      become: yes
+
+    - name: Remove previous JMeter Docker image if exists
+      ansible.builtin.shell:
+        cmd: "docker rmi iede/jmeter:v1.0 || true"
+      become: yes
+
     - name: Pull the JMeter Docker image
       shell:
         cmd: sudo docker pull iede/jmeter:v1.0
