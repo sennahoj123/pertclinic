@@ -71,3 +71,12 @@ jobs:
     steps:
       - name: Production Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-production.yml
+
+  Destoy-Terraform:
+    name: Bootstrap production
+    runs-on: iede
+    needs: build-VMs
+    steps:
+      - name: Terraform Init
+        working-directory: terraform-azure
+        run: terraform destoy-auto-appove
