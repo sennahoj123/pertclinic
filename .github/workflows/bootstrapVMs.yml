@@ -17,7 +17,7 @@ jobs:
           echo "  StrictHostKeyChecking no" >> /home/adminuser/.ssh/config
 
       - name: rm git repo
-        run: rm -r /opt/pertclinic 
+        run: sudo rm -r /opt/pertclinic 
 
       - name: Clone repo
         run: git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
