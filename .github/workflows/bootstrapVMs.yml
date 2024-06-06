@@ -75,7 +75,7 @@ jobs:
   Destoy-Terraform:
     name: Terraforn Destroy
     runs-on: iede
-    needs: Bootstrap production
+    needs: production-VM
     steps:
       - name: Terraform Init
         working-directory: terraform-azure
