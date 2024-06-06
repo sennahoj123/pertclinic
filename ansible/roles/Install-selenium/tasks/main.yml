@@ -35,7 +35,7 @@
 
 - name: Install selenium using pip
   shell:
-    cmd: pip install selenium
+    cmd: pip3 install selenium
 
 - name: Install Selenium Side Runner
   npm:
