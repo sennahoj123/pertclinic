@@ -33,16 +33,9 @@
     name: python3-pip
     state: present
 
-- name: Check if selenium is already installed
-  command: pip3 show selenium
-  register: selenium_installed
-  ignore_errors: yes
-
 - name: Install selenium using pip
-  pip:
-    name: selenium
-    state: present
-  when: selenium_installed.rc != 0
+  shell:
+    cmd: pip install selenium
 
 - name: Install Selenium Side Runner
   npm:
