@@ -31,7 +31,7 @@
 
 - name: Ignore PEP 668 because it's silly.
   ansible.builtin.file:
-    path: /usr/lib/python3.11/EXTERNALLY-MANAGED
+    path: /usr/lib/python3.12/EXTERNALLY-MANAGED
     state: absent
 
 - name: Install pip for Python 3
