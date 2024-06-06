@@ -79,15 +79,22 @@ jobs:
     steps:
       - name: Production Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-production.yml
-      
-      - name: rm git repo
-        run: sudo rm -r /opt/pertclinic 
 
-  Destoy-Terraform:
-    name: Terraforn Destroy
+  Destroy:
+    name: Terraform Destroy & rm git repo
     runs-on: iede
     needs: production-VM
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+  
       - name: Terraform Init
         working-directory: terraform-azure
-        run: terraform destroy-auto-approve
+        run: terraform init
+  
+      - name: Terraform Destroy
+        working-directory: terraform-azure
+        run: terraform destroy -auto-approve
+            
+      - name: rm git repo
+        run: sudo rm -r /opt/pertclinic 
