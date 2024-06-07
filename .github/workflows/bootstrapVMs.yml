@@ -29,31 +29,7 @@ jobs:
         working-directory: terraform-azure
         run: terraform init
 
-      - name: Import azurerm_network_interface
-        run: |
-          terraform import azurerm_network_interface.az_ni[0] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkInterfaces/vm0-ni
-          terraform import azurerm_network_interface.az_ni[1] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkInterfaces/vm1-ni
-          terraform import azurerm_network_interface.az_ni[2] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkInterfaces/vm2-ni
-        working-directory: terraform-azure
-
-      - name: Import azurerm_public_ip
-        run: |
-          terraform import azurerm_public_ip.az_ip[0] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/publicIPAddresses/vm0
-          terraform import azurerm_public_ip.az_ip[1] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/publicIPAddresses/vm1
-          terraform import azurerm_public_ip.az_ip[2] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/publicIPAddresses/vm2
-        working-directory: terraform-azure
-
-      - name: Check if VM0 exists
-        id: check_vm0
-        run: |
-          result=$(az vm show --resource-group iede_adu-rg --name production --query id --output tsv || echo "notfound")
-          echo "::set-output name=vm0_exists::$result"
-
-      - name: Import VM0 if it exists
-        if: steps.check_vm0.outputs.vm0_exists != 'notfound'
-        run: |
-          terraform import azurerm_linux_virtual_machine.az_vm[0] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/production
-
+     
       - name: Terraform Apply
         working-directory: terraform-azure
         run: terraform apply -auto-approve
