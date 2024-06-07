@@ -62,6 +62,9 @@ jobs:
       - name: Testing Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
 
+      - name: change owner
+        run: sudo chown adminuser:adminuser testresultsiede.jtl && sudo chmod 777 testresultsiede.jtl
+      
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
