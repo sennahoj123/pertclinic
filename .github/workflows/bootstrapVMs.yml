@@ -29,6 +29,27 @@ jobs:
         working-directory: terraform-azure
         run: terraform init
 
+      - name: Import azurerm_network_interface
+        run: |
+          terraform import azurerm_network_interface.az_ni[0] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkInterfaces/vm0-ni
+          terraform import azurerm_network_interface.az_ni[1] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkInterfaces/vm1-ni
+          terraform import azurerm_network_interface.az_ni[2] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkInterfaces/vm2-ni
+        working-directory: /opt/pertclinic/terraform-azure
+
+      - name: Import azurerm_public_ip
+        run: |
+          terraform import azurerm_public_ip.az_ip[0] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/publicIPAddresses/vm0
+          terraform import azurerm_public_ip.az_ip[1] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/publicIPAddresses/vm1
+          terraform import azurerm_public_ip.az_ip[2] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/publicIPAddresses/vm2
+        working-directory: /opt/pertclinic/terraform-azure
+
+      - name: Import azurerm_linux_virtual_machine
+        run: |
+          terraform import azurerm_linux_virtual_machine.az_vm[0] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/production
+          terraform import azurerm_linux_virtual_machine.az_vm[1] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/vm1
+          terraform import azurerm_linux_virtual_machine.az_vm[2] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/vm2
+        working-directory: /opt/pertclinic/terraform-azure
+
       - name: Terraform Apply
         working-directory: terraform-azure
         run: terraform apply -auto-approve
