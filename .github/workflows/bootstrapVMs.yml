@@ -33,6 +33,10 @@ jobs:
         working-directory: terraform-azure
         run: terraform apply -auto-approve
 
+      - name: Terraform Init
+        working-directory: terraform-azure
+        run: terraform init
+
       - name: Output Public IP Addresses
         working-directory: terraform-azure
         run: sleep 10 && terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
