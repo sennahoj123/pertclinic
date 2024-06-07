@@ -31,7 +31,6 @@
       ansible.builtin.file:
         path: /opt/pertclinic/target/petclinic.war
         mode: '0777'
-
       register: maven_build_result
       ignore_errors: true
 
@@ -48,5 +47,4 @@
 
     - name: Run Selenium test script
       shell: python3 /opt/pertclinic/selenium_test.py
-      register: selenium_test_result
       ignore_errors: yes
