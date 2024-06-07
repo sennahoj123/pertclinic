@@ -1,21 +1,16 @@
-- name: Update apt package cache
+---
+- name: Update apt package cache and install prerequisites
   ansible.builtin.apt:
     update_cache: yes
-
-- name: Install prerequisites for Node.js
-  ansible.builtin.apt:
-    name: curl
-    state: present
+    name:
+      - curl
+      - nodejs
+      - python3
+      - python3-pip
   become: yes
 
 - name: Add Node.js 20 repository
-  ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-  become: yes
-
-- name: Install Node.js 20
-  ansible.builtin.apt:
-    name: nodejs
-    state: present
+  ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
   become: yes
 
 - name: Ensure Node.js was installed
@@ -23,42 +18,20 @@
   register: node_version_check
   failed_when: node_version_check.rc != 0
 
-- name: Install Python 3
-  ansible.builtin.apt:
-    name: python3
-    state: present
-  become: yes
-
 - name: Ignore PEP 668 because it's silly.
   ansible.builtin.file:
     path: /usr/lib/python3.12/EXTERNALLY-MANAGED
     state: absent
 
-- name: Install pip for Python 3
-  ansible.builtin.apt:
-    name: python3-pip
-    state: present
-  become: yes
-
-- name: Install selenium using pip
+- name: Install Selenium and Selenium Side Runner
   ansible.builtin.pip:
-    name: selenium
-    executable: pip3
-
-- name: Update apt repositories
-  ansible.builtin.shell: sudo apt update
-  become: yes
-
-- name: Install python3-pip
-  ansible.builtin.shell: sudo apt install -y python3-pip
+    name:
+      - selenium
+      - six
   become: yes
 
 - name: Upgrade Ansible using pip3
   ansible.builtin.shell: sudo pip3 install ansible --upgrade
-  become: yes
-
-- name: Install six module
-  ansible.builtin.shell: pip3 install six
   become: yes
 
 - name: Install Selenium Side Runner

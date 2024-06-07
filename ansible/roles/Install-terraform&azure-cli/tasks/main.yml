@@ -1,31 +1,35 @@
----
-- name: Update apt package cache
+- name: Update apt package cache and install necessary dependencies
   ansible.builtin.apt:
     update_cache: yes
-
-- name: Install necessary dependencies
-  ansible.builtin.apt:
     name:
+      - apt-transport-https
       - ca-certificates
       - curl
-      - apt-transport-https
-      - lsb-release
       - gnupg
+      - lsb-release
   become: yes
 
-- name: Install Terraform using snap
-  ansible.builtin.shell: sudo snap install terraform --classic
-  become: yes
-
-- name: Add Microsoft signing key
-  ansible.builtin.shell: curl -sL https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
-  become: yes
-
-- name: Add Azure CLI repository
+- name: Download and install the Microsoft signing key
   ansible.builtin.shell: |
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+    sudo mkdir -p /etc/apt/keyrings
+    curl -sLS https://packages.microsoft.com/keys/microsoft.asc |
+      sudo gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg
+    sudo chmod go+r /etc/apt/keyrings/microsoft.gpg
   become: yes
 
-- name: Install Azure CLI
-  ansible.builtin.shell: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+- name: Add the Azure CLI software repository
+  ansible.builtin.shell: |
+    AZ_DIST=$(lsb_release -cs)
+    echo "Types: deb
+    URIs: https://packages.microsoft.com/repos/azure-cli/
+    Suites: ${AZ_DIST}
+    Components: main
+    Architectures: $(dpkg --print-architecture)
+    Signed-by: /etc/apt/keyrings/microsoft.gpg" | sudo tee /etc/apt/sources.list.d/azure-cli.sources
+  become: yes
+
+- name: Update repository information and install the azure-cli package
+  ansible.builtin.shell: |
+    sudo apt-get update
+    sudo apt-get install azure-cli
   become: yes
