@@ -69,7 +69,3 @@
 - name: Install six module
   ansible.builtin.shell: pip3 install six
   become: yes
-
-handlers:
-  - name: Terraform Installed
-    ansible.builtin.shell: echo "Terraform installed successfully"
