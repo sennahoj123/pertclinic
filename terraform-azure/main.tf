@@ -56,7 +56,7 @@ resource "azurerm_subnet_network_security_group_association" "az_sn" {
 
 resource "azurerm_public_ip" "az_ip" {
   count               = 3
-  name                = "vm${count.index}"
+  name                = count.index == 0 ? "production" : "vm${count.index}-ip"
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   allocation_method   = "Dynamic"
@@ -68,7 +68,7 @@ resource "azurerm_public_ip" "az_ip" {
 
 resource "azurerm_network_interface" "az_ni" {
   count               = 3
-  name                = "vm${count.index}-ni"
+  name                = count.index == 0 ? "production" : "vm${count.index}-ni"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
 
