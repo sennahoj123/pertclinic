@@ -85,21 +85,12 @@ jobs:
     runs-on: iede
     needs: production-VM
     steps:
-
-      - name: rm git repo
-        run: sudo rm -r /opt/pertclinic
-
-      - name: Destroy VM1
-        run: terraform destroy -target azurerm_linux_virtual_machine.az_vm["vm1"] -auto-approve
-        working-directory: terraform-azure
-
-      - name: Destroy VM2
-        run: terraform destroy -target azurerm_linux_virtual_machine.az_vm["vm2"] -auto-approve
-        working-directory: terraform-azure
-
       - name: Check out repository
         uses: actions/checkout@v4
-  
+        
+      - name: Destroy testing & acceptance
+        run: terraform destroy -target=azurerm_linux_virtual_machine.vm1 -target=azurerm_linux_virtual_machine.vm2
+
       - name: Terraform Init
         working-directory: terraform-azure
         run: terraform init
