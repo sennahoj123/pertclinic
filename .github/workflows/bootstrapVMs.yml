@@ -62,11 +62,23 @@ jobs:
       - name: Testing Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
 
+      - name: ll
+        run: | 
+          cd /opt
+          pwd
+          ls -la
+          
+      - name: Move testresultsiede.jtl to home directory
+        run: mv /opt/testresultsiede.jtl ~/
+        
+      - name: Verify file in home directory
+        run: ls -la ~/testresultsiede.jtl
+        
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-results
-          path: /opt/testresultsiede.jtl
+          path: ~/testresultsiede.jtl
           if-no-files-found: error
 
   acceptance-VM:
