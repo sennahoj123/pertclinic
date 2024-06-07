@@ -62,6 +62,12 @@ jobs:
       - name: Testing Playbook
         run: ansible-playbook -i /opt/pertclinic/ansible/hosts /opt/pertclinic/ansible/main-testing.yml
 
+      - name: ll
+        run: | 
+          cd /opt
+          pwd
+          ls -la
+          
       - name: Move testresultsiede.jtl to home directory
         run: mv /opt/testresultsiede.jtl ~/
         
