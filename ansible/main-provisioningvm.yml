@@ -5,7 +5,7 @@
   remote_user: adminuser
   roles:
     #- Install-openJDK
-    - Install-maven
+    #- Install-maven
     #- Install-jmeter
     - Install-terraform&azure-cli
     - Install-ansi
