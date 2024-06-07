@@ -29,11 +29,6 @@ jobs:
         working-directory: terraform-azure
         run: terraform init
 
-      - name: Terraform Apply
-        working-directory: terraform-azure
-        run: terraform apply -auto-approve
-
-
       - name: Import azurerm_network_interface
         run: |
           terraform import azurerm_network_interface.az_ni[0] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkInterfaces/vm0-ni
@@ -54,6 +49,10 @@ jobs:
           terraform import azurerm_linux_virtual_machine.az_vm[1] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/vm1
           terraform import azurerm_linux_virtual_machine.az_vm[2] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/vm2
         working-directory: terraform-azure
+
+      - name: Terraform Apply
+        working-directory: terraform-azure
+        run: terraform apply -auto-approve
 
       - name: Terraform Init
         working-directory: terraform-azure
