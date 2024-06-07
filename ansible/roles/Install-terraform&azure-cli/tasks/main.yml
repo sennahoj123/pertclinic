@@ -11,10 +11,6 @@
       - apt-transport-https
       - lsb-release
       - gnupg
-      - snapd
-      - wget
-      - unzip
-    state: present
   become: yes
 
 - name: Install Terraform using snap
@@ -22,35 +18,14 @@
   become: yes
 
 - name: Add Microsoft signing key
-  ansible.builtin.shell: |
-    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+  ansible.builtin.shell: curl -sL https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
   become: yes
 
 - name: Add Azure CLI repository
   ansible.builtin.shell: |
-    AZ_REPO=$(lsb_release -cs)
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
   become: yes
 
-- name: Update apt cache and install Azure CLI
-  ansible.builtin.apt:
-    update_cache: yes
-    name: azure-cli
-    state: present
-  become: yes
-
-- name: Update apt repositories
-  ansible.builtin.shell: sudo apt update
-  become: yes
-
-- name: Install python3-pip
-  ansible.builtin.shell: sudo apt install -y python3-pip
-  become: yes
-
-- name: Upgrade Ansible using pip3
-  ansible.builtin.shell: sudo pip3 install ansible --upgrade
-  become: yes
-
-- name: Install six module
-  ansible.builtin.shell: pip3 install six
+- name: Install Azure CLI
+  ansible.builtin.shell: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
   become: yes
