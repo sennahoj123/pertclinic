@@ -43,12 +43,16 @@ jobs:
           terraform import azurerm_public_ip.az_ip[2] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/publicIPAddresses/vm2
         working-directory: terraform-azure
 
-      - name: Import azurerm_linux_virtual_machine
+      - name: Check if VM0 exists
+        id: check_vm0
+        run: |
+          result=$(az vm show --resource-group iede_adu-rg --name production --query id --output tsv || echo "notfound")
+          echo "::set-output name=vm0_exists::$result"
+
+      - name: Import VM0 if it exists
+        if: steps.check_vm0.outputs.vm0_exists != 'notfound'
         run: |
           terraform import azurerm_linux_virtual_machine.az_vm[0] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/production
-          terraform import azurerm_linux_virtual_machine.az_vm[1] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/vm1
-          terraform import azurerm_linux_virtual_machine.az_vm[2] /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Compute/virtualMachines/vm2
-        working-directory: terraform-azure
 
       - name: Terraform Apply
         working-directory: terraform-azure
