@@ -11,15 +11,26 @@
       - apt-transport-https
       - lsb-release
       - gnupg
-      - snapd
       - wget
       - unzip
     state: present
   become: yes
 
-- name: Install Terraform using snap
-  ansible.builtin.shell: sudo snap install terraform --classic
+- name: Install Terraform
+  ansible.builtin.get_url:
+    url: "https://releases.hashicorp.com/terraform/0.15.5/terraform_0.15.5_linux_amd64.zip"
+    dest: "/tmp/terraform.zip"
   become: yes
+
+- name: Unzip Terraform
+  ansible.builtin.unarchive:
+    src: "/tmp/terraform.zip"
+    dest: "/usr/local/bin/"
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+  become: yes
+  notify:
+    - Terraform Installed
 
 - name: Add Microsoft signing key
   ansible.builtin.shell: |
@@ -40,11 +51,7 @@
   become: yes
 
 - name: Update apt package cache and install jq
-  shell:
-    cmd: sudo apt-get install -y jq
-
-- name: Update apt package cache and install jq
-  shell:
+  ansible.builtin.shell:
     cmd: sudo apt-get install -y jq
 
 - name: Update apt repositories
@@ -63,5 +70,6 @@
   ansible.builtin.shell: pip3 install six
   become: yes
 
-
-
+handlers:
+  - name: Terraform Installed
+    ansible.builtin.shell: echo "Terraform installed successfully"

@@ -12,3 +12,4 @@ localhost ansible_connection=local ansible_user=iede
 
 #[Production]
 #52.236.169.235 ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa/id_rsa_ansible 
+git pu
