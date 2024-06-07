@@ -35,13 +35,13 @@ jobs:
 
       - name: Output Public IP Addresses
         working-directory: terraform-azure
-        run: terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
+        run: sleep 10 && terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
 
       - name: Check IP Addresses File
         run: cat /opt/pertclinic/terraform-azure/ip_addresses.json
 
       - name: Update Hosts File
-        run: sleep 10 && python3 /opt/pertclinic/terraform-azure/ip_input.py
+        run: python3 /opt/pertclinic/terraform-azure/ip_input.py
 
       - name: Check Updated Hosts File
         run: cat /opt/pertclinic/ansible/hosts
