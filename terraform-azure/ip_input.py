@@ -7,13 +7,13 @@ with open('/opt/pertclinic/terraform-azure/ip_addresses.json') as f:
 # Define the template for hosts file
 hosts_template = """
 [Testing]
-{vm1} ansible_host={vm1_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
+{vm1_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
 
 [Acceptance]
-{vm2} ansible_host={vm2_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
+{vm2_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
 
 [Production]
-{vm3} ansible_host={vm3_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
+{vm3_ip} ansible_user=adminuser ansible_ssh_private_key_file=/home/adminuser/.ssh/id_rsa
 """
 
 # Update hosts file with Terraform IP addresses
