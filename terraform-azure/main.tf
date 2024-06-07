@@ -55,8 +55,9 @@ resource "azurerm_subnet_network_security_group_association" "az_sn" {
 }
 
 resource "azurerm_public_ip" "az_ip" {
-  count               = 3
-  name                = count.index == 0 ? "production" : "vm${count.index}-ip"
+  for_each = var.vm_map
+
+  name                = "${each.value.name}-ip"
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   allocation_method   = "Dynamic"
@@ -67,8 +68,9 @@ resource "azurerm_public_ip" "az_ip" {
 }
 
 resource "azurerm_network_interface" "az_ni" {
-  count               = 3
-  name                = count.index == 0 ? "production" : "vm${count.index}-ni"
+  for_each            = var.vm_map
+
+  name                = "${each.value.name}-ni"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
 
@@ -76,19 +78,20 @@ resource "azurerm_network_interface" "az_ni" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.az_sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.az_ip[count.index].id
+    public_ip_address_id          = azurerm_public_ip.az_ip[each.key].id
   }
 }
 
 resource "azurerm_linux_virtual_machine" "az_vm" {
-  count               = 3
-  name                = count.index == 0 ? "production" : "vm${count.index}"
+  for_each = var.vm_map
+
+  name                = each.value.name
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
   admin_username      = "adminuser"
   network_interface_ids = [
-    azurerm_network_interface.az_ni[count.index].id
+    azurerm_network_interface.az_ni[each.key].id
   ]
 
   admin_ssh_key {
