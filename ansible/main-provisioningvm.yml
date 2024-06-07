@@ -4,7 +4,7 @@
   become: yes
   remote_user: adminuser
   roles:
-    - Install-openJDK
+    #- Install-openJDK
     - Install-maven
     #- Install-jmeter
     - Install-terraform&azure-cli
@@ -12,7 +12,7 @@
     #- Install-chrome
     - Install-github-runner
     #- Install-docker
-    - Install-tomcat
+    #- Install-tomcat
     #- Install-selenium
 
   tasks:
