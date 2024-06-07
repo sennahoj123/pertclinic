@@ -45,4 +45,6 @@
 - name: Ensure chromedriver is executable
   file:
     path: /usr/bin/chromedriver
+    owner: adminuser
+    group: adminuser
     mode: '0755'
