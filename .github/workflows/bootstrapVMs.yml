@@ -68,6 +68,10 @@ jobs:
           pwd
           ls -la
           
+      - name: Copy testresultsiede.jtl from testingvm to provisioningvm
+        run: |
+          scp adminuser@Testing:/opt/testresultsiede.jtl /opt/testresultsiede.jtl
+          
       - name: Move testresultsiede.jtl to home directory
         run: mv /opt/testresultsiede.jtl ~/
         
