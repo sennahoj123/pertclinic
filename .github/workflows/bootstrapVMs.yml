@@ -93,15 +93,28 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: to folder
-        run: cd /opt/pertclinic/terraform-azure
-
-      - name: destroy testing
-        run: terraform destroy -target=azurerm_linux_virtual_machine.testing -auto-approve
-        
-      - name: Destroy testing & acceptance
-        run: terraform destroy 
+      - name: Initialize Terraform
+        working-directory: terraform-azure
+        run: terraform init
+  
+      - name: Destroy VM1 Resources
+        working-directory: terraform-azure
+        run: |
+          terraform destroy \
+            -target="azurerm_linux_virtual_machine.az_vm[\"vm1\"]" \
+            -target="azurerm_network_interface.az_ni[\"vm1\"]" \
+            -target="azurerm_public_ip.az_ip[\"vm1\"]" \
+            -auto-approve
+  
+      - name: Destroy VM2 Resources
+        working-directory: terraform-azure
+        run: |
+          terraform destroy \
+            -target="azurerm_linux_virtual_machine.az_vm[\"vm2\"]" \
+            -target="azurerm_network_interface.az_ni[\"vm2\"]" \
+            -target="azurerm_public_ip.az_ip[\"vm2\"]" \
+            -auto-approve
             
-      #- name: rm git repo
-       # run: sudo rm -r /opt/pertclinic 
+      - name: rm git repo
+        run: sudo rm -r /opt/pertclinic 
 
