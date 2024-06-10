@@ -28,7 +28,6 @@ resource "azurerm_subnet" "az_sn" {
   virtual_network_name = azurerm_virtual_network.az_vn.name
   address_prefixes     = ["10.123.1.0/24"]
 }
-
 resource "azurerm_network_security_group" "az_sg" {
   name                = "iede_adu-rg-security"
   location            = data.azurerm_resource_group.existing.location
@@ -96,7 +95,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("~/.ssh/id_rsa.pub")
+    public_key = file("${path.module}/public_key.pem")
   }
 
   os_disk {
