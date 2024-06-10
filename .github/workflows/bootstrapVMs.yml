@@ -30,7 +30,7 @@ jobs:
         run: terraform init
 
       - name: Set up SSH key
-        run: echo "${{ secrets.SSH }}" > public_key.pem
+        run: echo "${{ secrets.SSH }}" > terraform-azure/public_key.pem
      
       - name: Terraform Apply
         working-directory: terraform-azure
