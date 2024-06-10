@@ -28,60 +28,88 @@ print("Opened Petclinic homepage")
 driver.set_window_size(980, 1176)
 print("Set window size")
 
-# Define a function to wait and click elements
-def wait_and_click(driver, by, selector, timeout=20):
+# Define a function to wait and find elements
+def wait_and_find(driver, by, selector, timeout=20):
     try:
         element = WebDriverWait(driver, timeout).until(
-            EC.element_to_be_clickable((by, selector))
+            EC.presence_of_element_located((by, selector))
         )
-        element.click()
-        return True
+        return element
     except Exception as e:
         print(f"An error occurred: {e}")
-        return False
+        return None
 
 # Click on the "Oups" link (4th item in the navbar)
-if wait_and_click(driver, By.CSS_SELECTOR, "li:nth-child(4) > a"):
+oups_link = wait_and_find(driver, By.CSS_SELECTOR, "li:nth-child(4) > a")
+if oups_link:
+    oups_link.click()
     print("Clicked on 'Oups' link")
 
 # Click on the "Owners" link (3rd item in the navbar)
-if wait_and_click(driver, By.CSS_SELECTOR, "li:nth-child(3) span:nth-child(2)"):
+owners_link = wait_and_find(driver, By.CSS_SELECTOR, "li:nth-child(3) span:nth-child(2)")
+if owners_link:
+    owners_link.click()
     print("Clicked on 'Owners' link")
 
 # Click on the "Veterinarians" link (2nd item in the navbar)
-if wait_and_click(driver, By.CSS_SELECTOR, "li:nth-child(2) span:nth-child(2)"):
+vets_link = wait_and_find(driver, By.CSS_SELECTOR, "li:nth-child(2) span:nth-child(2)")
+if vets_link:
+    vets_link.click()
     print("Clicked on 'Veterinarians' link")
 
 # Click on the "Find Owners" field
-if wait_and_click(driver, By.NAME, "lastName"):
+find_owners_field = wait_and_find(driver, By.NAME, "lastName")
+if find_owners_field:
+    find_owners_field.click()
     print("Clicked on 'Find Owners' field")
 
 # Click on the "Add Owner" link
-if wait_and_click(driver, By.LINK_TEXT, "Add Owner"):
+add_owner_link = wait_and_find(driver, By.LINK_TEXT, "Add Owner")
+if add_owner_link:
+    add_owner_link.click()
     print("Clicked on 'Add Owner' link")
 
 # Fill out the form with owner details
-driver.find_element(By.ID, "firstName").send_keys("Iede")
-driver.find_element(By.ID, "lastName").send_keys("ADU")
-driver.find_element(By.ID, "address").send_keys("zwanenvechtlaan 140")
-driver.find_element(By.ID, "city").send_keys("Utrecht")
-driver.find_element(By.ID, "telephone").send_keys("0628716632")
+first_name_field = wait_and_find(driver, By.ID, "firstName")
+if first_name_field:
+    first_name_field.send_keys("Iede")
+last_name_field = wait_and_find(driver, By.ID, "lastName")
+if last_name_field:
+    last_name_field.send_keys("ADU")
+address_field = wait_and_find(driver, By.ID, "address")
+if address_field:
+    address_field.send_keys("zwanenvechtlaan 140")
+city_field = wait_and_find(driver, By.ID, "city")
+if city_field:
+    city_field.send_keys("Utrecht")
+telephone_field = wait_and_find(driver, By.ID, "telephone")
+if telephone_field:
+    telephone_field.send_keys("0628716632")
 print("Filled out owner details")
 
 # Click the "Add Owner" button to submit the form
-if wait_and_click(driver, By.CSS_SELECTOR, ".btn"):
+submit_button = wait_and_find(driver, By.CSS_SELECTOR, ".btn")
+if submit_button:
+    submit_button.click()
     print("Submitted owner details")
 
 # Click on the "Find Owners" link again
-if wait_and_click(driver, By.CSS_SELECTOR, ".active span:nth-child(2)"):
+find_owners_link = wait_and_find(driver, By.CSS_SELECTOR, ".active span:nth-child(2)")
+if find_owners_link:
+    find_owners_link.click()
     print("Clicked on 'Find Owners' link again")
 
 # Search for the newly added owner
-driver.find_element(By.NAME, "lastName").send_keys("iede adu", Keys.ENTER)
-print("Searched for the newly added owner")
+last_name_search_field = wait_and_find(driver, By.NAME, "lastName")
+if last_name_search_field:
+    last_name_search_field.send_keys("iede adu")
+    last_name_search_field.send_keys(Keys.ENTER)
+    print("Searched for the newly added owner")
 
 # Click the "Find Owner" button to search
-if wait_and_click(driver, By.CSS_SELECTOR, ".btn:nth-child(1)"):
+find_owner_button = wait_and_find(driver, By.CSS_SELECTOR, ".btn:nth-child(1)")
+if find_owner_button:
+    find_owner_button.click()
     print("Clicked 'Find Owner' button")
 
 # Clean up by closing the WebDriver
