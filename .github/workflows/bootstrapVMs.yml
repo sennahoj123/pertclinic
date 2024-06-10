@@ -29,6 +29,8 @@ jobs:
         working-directory: terraform-azure
         run: terraform init
 
+      - name: Set up SSH key
+        run: echo "${{ secrets.SSH }}" > public_key.pem
      
       - name: Terraform Apply
         working-directory: terraform-azure
