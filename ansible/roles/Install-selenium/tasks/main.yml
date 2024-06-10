@@ -30,13 +30,3 @@
       - six
   become: yes
 
-- name: Upgrade Ansible using pip3
-  ansible.builtin.shell: sudo pip3 install ansible --upgrade
-  become: yes
-
-- name: Install Selenium Side Runner
-  ansible.builtin.npm:
-    name: selenium-side-runner
-    global: yes
-    state: present
-  become: yes
