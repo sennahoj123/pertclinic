@@ -1,45 +1,25 @@
-- name: Update apt package cache
+- name: Install Terraform
+  ansible.builtin.apt:
+    name: terraform
+    state: present
+  become: yes
+
+- name: Add HashiCorp GPG key
+  ansible.builtin.command: wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  become: yes
+
+- name: Add HashiCorp APT repository
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+  become: yes
+
+- name: Update APT package index
   ansible.builtin.apt:
     update_cache: yes
-
-- name: Install Terraform using snap
-  ansible.builtin.shell: sudo snap install terraform --classic
   become: yes
 
-- name: Add Microsoft signing key
-  ansible.builtin.shell: |
-    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
-  become: yes
-
-- name: Add Azure CLI repository
-  ansible.builtin.shell: |
-    AZ_REPO=$(lsb_release -cs)
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
-  become: yes
-
-- name: Update apt cache and install Azure CLI
+- name: Install Terraform
   ansible.builtin.apt:
-    update_cache: yes
-    name: azure-cli
+    name: terraform
     state: present
-  become: yes
-
-- name: Install jq
-  ansible.builtin.apt:
-    name: jq
-    state: present
-  become: yes
-
-- name: Install python3-pip
-  ansible.builtin.apt:
-    name: python3-pip
-    state: present
-  become: yes
-
-- name: Upgrade Ansible using pip3
-  ansible.builtin.shell: sudo pip3 install ansible --upgrade
-  become: yes
-
-- name: Install six module
-  ansible.builtin.shell: pip3 install six
   become: yes

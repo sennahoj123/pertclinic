@@ -7,8 +7,8 @@
     - Install-openJDK
     - Install-maven
     #- Install-jmeter
-    #- Install-terraform&azure-cli
-    #- Install-ansi
+    # - Install-terraform&azure-cli
+    # - Install-ansi
     #- Install-chrome
     #- Install-github-runner
     #- Install-docker
@@ -31,19 +31,17 @@
       ansible.builtin.file:
         path: /opt/pertclinic/target/petclinic.war
         mode: '0777'
-
+    
       register: maven_build_result
       ignore_errors: true
 
     - name: Check if the WAR file exists
       stat:
-        path: "/opt/pertclinic/target/petclinic.war"
+        path: "/opt/pertclinic/target/petclinic.war"        
       register: war_file_status
       failed_when: false
       when: maven_build_result is succeeded
 
     - name: Copy WAR file to Tomcat webapps directory
       ansible.builtin.shell:
-        cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war
-
-
+        cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war 

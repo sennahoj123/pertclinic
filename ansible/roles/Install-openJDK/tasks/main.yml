@@ -6,3 +6,4 @@
       - openjdk-17-jre
     state: latest
     update_cache: yes
+  become: yes

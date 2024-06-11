@@ -1,0 +1,74 @@
+- name: Add the Elastic GPG key
+  ansible.builtin.command: curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /usr/share/keyrings/elastic.gpg
+  become: yes
+
+- name: Add the Elastic APT repository
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/elastic-7.x.list
+    line: "deb [signed-by=/usr/share/keyrings/elastic.gpg] https://artifacts.elastic.co/packages/7.x/apt stable main"
+    create: yes
+  become: yes
+
+- name: Update APT package index
+  ansible.builtin.apt:
+    update_cache: yes
+  become: yes
+
+- name: Install Elasticsearch
+  ansible.builtin.apt:
+    name: elasticsearch
+    state: present
+  become: yes
+
+- name: Start Elasticsearch service
+  ansible.builtin.service:
+    name: elasticsearch
+    state: started
+  become: yes
+
+- name: Enable Elasticsearch service
+  ansible.builtin.service:
+    name: elasticsearch
+    enabled: yes
+  become: yes
+
+- name: Check Elasticsearch is running
+  ansible.builtin.uri:
+    url: http://192.168.178.183:9200
+    status_code: 200
+
+- name: Install Logstash
+  ansible.builtin.apt:
+    name: logstash
+    state: present
+  become: yes
+
+- name: Start Logstash service
+  ansible.builtin.service:
+    name: logstash
+    state: started
+  become: yes
+
+- name: Enable Logstash service
+  ansible.builtin.service:
+    name: logstash
+    enabled: yes
+  become: yes
+
+- name: Install Kibana
+  ansible.builtin.apt:
+    name: kibana
+    state: present
+  become: yes
+
+- name: Enable Kibana service
+  ansible.builtin.service:
+    name: kibana
+    enabled: yes
+  become: yes
+
+- name: Start Kibana service
+  ansible.builtin.service:
+    name: kibana
+    state: started
+  become: yes
