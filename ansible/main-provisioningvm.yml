@@ -18,4 +18,4 @@
 
   tasks:
     - name: ssh
-      shell: ssh-keygen -t rsa -y
+      shell: ssh-keygen -t rsa -N "" -f /home/adminuser/.ssh/id_rsa
