@@ -17,5 +17,32 @@
     - Install-ELK_slack
 
   tasks:
-    - name: ssh
-      shell: ssh-keygen -t rsa -N "" -f /home/adminuser/.ssh/id_rsa
+    - name: Ensure the .ssh directory exists
+      file:
+        path: /home/adminuser/.ssh
+        state: directory
+        mode: '0700'
+        owner: adminuser
+        group: adminuser
+
+    - name: Generate SSH key if it does not exist
+      shell: |
+        if [ ! -f /home/adminuser/.ssh/id_rsa ]; then
+          ssh-keygen -t rsa -N "" -f /home/adminuser/.ssh/id_rsa
+        fi
+      args:
+        creates: /home/adminuser/.ssh/id_rsa
+
+    - name: Ensure correct permissions for the SSH private key
+      file:
+        path: /home/adminuser/.ssh/id_rsa
+        owner: adminuser
+        group: adminuser
+        mode: '0600'
+      
+    - name: Ensure correct permissions for the SSH public key
+      file:
+        path: /home/adminuser/.ssh/id_rsa.pub
+        owner: adminuser
+        group: adminuser
+        mode: '0644'
