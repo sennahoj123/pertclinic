@@ -1,5 +1,5 @@
 - name: Add the Elastic GPG key
-  ansible.builtin.command: curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /usr/share/keyrings/elastic.gpg
+  ansible.builtin.shell: curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --batch --yes --dearmor -o /usr/share/keyrings/elastic.gpg
   become: yes
 
 - name: Add the Elastic APT repository
@@ -12,6 +12,10 @@
 - name: Update APT package index
   ansible.builtin.apt:
     update_cache: yes
+  become: yes
+
+- name: Install Elasticsearch
+  ansible.builtin.shell: sudo apt install -y elasticsearch
   become: yes
 
 - name: Install Elasticsearch
@@ -31,11 +35,6 @@
     name: elasticsearch
     enabled: yes
   become: yes
-
-- name: Check Elasticsearch is running
-  ansible.builtin.uri:
-    url: http://192.168.178.183:9200
-    status_code: 200
 
 - name: Install Logstash
   ansible.builtin.apt:

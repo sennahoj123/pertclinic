@@ -1,8 +1,3 @@
-- name: Install Terraform
-  ansible.builtin.apt:
-    name: terraform
-    state: present
-  become: yes
 
 - name: Add HashiCorp GPG key
   ansible.builtin.command: wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
