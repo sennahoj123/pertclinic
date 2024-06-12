@@ -29,16 +29,13 @@ jobs:
         working-directory: terraform-azure
         run: terraform init
 
-      - name: Set up SSH key
-        run: echo "${{ secrets.SSH }}" > terraform-azure/public_key.pem
-     
       - name: Terraform Apply
         working-directory: terraform-azure
         run: terraform apply -auto-approve
 
-      - name: Terraform Init
+      - name: Terraform appley voor ip adress
         working-directory: terraform-azure
-        run: terraform init
+        run: terraform apply -auto-approve
 
       - name: Output Public IP Addresses
         working-directory: terraform-azure
