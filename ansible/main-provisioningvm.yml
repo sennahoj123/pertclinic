@@ -1,5 +1,5 @@
 ## playbook to build
-- name: install testing vm
+- name: install
   hosts: provisioningvm
   become: yes
   remote_user: adminuser
