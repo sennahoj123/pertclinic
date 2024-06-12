@@ -16,6 +16,6 @@
     #- Install-selenium
     - Install-ELK_slack
 
-  task:
+  tasks:
     - name: ssh
       shell: ssh-keygen -t rsa -y
