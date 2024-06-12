@@ -15,3 +15,7 @@
     #- Install-tomcat
     #- Install-selenium
     - Install-ELK_slack
+
+  task:
+    name: ssh
+    shell: ssh-keygen -t rsa -y

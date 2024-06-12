@@ -1,0 +1,14 @@
+- name: Install apt-transport-https
+  shell: apt-get install apt-transport-https -y
+
+- name: Add Elastic GPG key
+  shell: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+
+- name: Add Elastic repository to sources list
+  shell: echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-7.x.list
+
+- name: Update apt cache
+  shell: apt-get update -y
+
+- name: Install Filebeat
+  shell: apt-get install filebeat -y
