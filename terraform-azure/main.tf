@@ -28,6 +28,7 @@ resource "azurerm_subnet" "az_sn" {
   virtual_network_name = azurerm_virtual_network.az_vn.name
   address_prefixes     = ["10.123.1.0/24"]
 }
+
 resource "azurerm_network_security_group" "az_sg" {
   name                = "iede_adu-rg-security"
   location            = data.azurerm_resource_group.existing.location

@@ -4,13 +4,13 @@ variable "vm_map" {
   }))
   default = {
     "vm1" = {
-      name = "Testing"
+      name = "vm1"
     }
     "vm2" = {
-      name = "Production"
+      name = "vm2"
     }
-    "vm3" = {
-      name = "Acceptance"
+    "production" = {
+      name = "production"
     }
   }
 }

@@ -14,8 +14,6 @@
     #- Install-docker
     #- Install-tomcat
     #- Install-selenium
-    - Install-ELK_slack
-    - Install-firebeat
 
   tasks:
     - name: Ensure the .ssh directory exists

@@ -12,3 +12,4 @@
 
 - name: Install Filebeat
   shell: apt-get install filebeat -y
+

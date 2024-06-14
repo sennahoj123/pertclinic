@@ -2,7 +2,10 @@
 localhost ansible_connection=local ansible_user=iede
 
 [provisioningvm]
-20.224.0.219 ansible_user=adminuser ansible_ssh_private_key_file=/home/iede/.ssh/id_rsa_ansible
+20.13.5.78 ansible_user=adminuser ansible_ssh_private_key_file=/home/iede/.ssh/id_rsa_ansible
+
+[elastikvm]
+20.13.5.37 ansible_user=adminuser ansible_ssh_private_key_file=/home/iede/.ssh/id_rsa_ansible
 
 #[Testing]
 #52.236.173.79 ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa/id_rsa_ansible 
