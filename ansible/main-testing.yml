@@ -1,6 +1,6 @@
 ---
 - name: Install and configure the testing VM
-  hosts: Testing
+  hosts: vm1
   become: yes
   remote_user: adminuser
   roles:

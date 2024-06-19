@@ -1,4 +1,3 @@
----
 - name: Ensure apt-transport-https is installed
   ansible.builtin.shell: apt-get install apt-transport-https -y
 
@@ -48,7 +47,79 @@
     replace: '#hosts: ["localhost:5044"]'
     backup: yes
 
+- name: Enable modules
+  ansible.builtin.shell: |
+    sudo filebeat modules enable elasticsearch
+    sudo filebeat modules enable kibana
+    sudo filebeat modules enable logstash
+
+- name: Configure Elasticsearch module
+  ansible.builtin.copy:
+    dest: /etc/filebeat/modules.d/elasticsearch.yml
+    content: |
+      - module: elasticsearch
+        # Server log
+        server:
+          enabled: true
+          var.paths: ["/var/log/elasticsearch/elasticsearch_server.log"]
+
+        gc:
+          enabled: true
+          var.paths: ["/var/log/elasticsearch/elasticsearch_gc.log"]
+
+        audit:
+          enabled: true
+          var.paths: ["/var/log/elasticsearch/elasticsearch_audit.log"]
+
+        slowlog:
+          enabled: true
+          var.paths: ["/var/log/elasticsearch/elasticsearch_slowlog.log"]
+
+        deprecation:
+          enabled: true
+          var.paths: ["/var/log/elasticsearch/elasticsearch_deprecation.log"]
+
+- name: Configure Kibana module
+  ansible.builtin.copy:
+    dest: /etc/filebeat/modules.d/kibana.yml
+    content: |
+      - module: kibana
+        # Access logs
+        access:
+          enabled: true
+          var.paths: ["/var/log/kibana/kibana_access.log"]
+
+        # Error logs
+        error:
+          enabled: true
+          var.paths: ["/var/log/kibana/kibana_error.log"]
+
+        # Kibana log
+        log:
+          enabled: true
+          var.paths: ["/var/log/kibana/kibana.log"]
+
+- name: Configure Logstash module
+  ansible.builtin.copy:
+    dest: /etc/filebeat/modules.d/logstash.yml
+    content: |
+      - module: logstash
+        # Logstash log
+        log:
+          enabled: true
+          var.paths: ["/var/log/logstash/logstash-plain.log"]
+
+        # Logstash slow logs
+        slowlog:
+          enabled: true
+          var.paths: ["/var/log/logstash/logstash-slowlog-plain.log"]
+
 - name: Restart Filebeat service
   ansible.builtin.systemd:
     name: filebeat
     state: restarted
+
+- name: Enable Filebeat service on boot
+  ansible.builtin.systemd:
+    name: filebeat
+    enabled: yes

@@ -1,6 +1,6 @@
 ## playbook to execute deploy vm
 - name: install testing vm
-  hosts: Production
+  hosts: production
   become: yes
   remote_user: adminuser
   roles:
