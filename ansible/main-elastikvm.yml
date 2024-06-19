@@ -1,6 +1,6 @@
 ## playbook to build
 - name: install
-  hosts: provisioningvm
+  hosts: ElastikVM
   become: yes
   remote_user: adminuser
   roles:

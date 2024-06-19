@@ -1,15 +1,54 @@
-- name: Install apt-transport-https
-  shell: apt-get install apt-transport-https -y
+---
+- name: Ensure apt-transport-https is installed
+  ansible.builtin.shell: apt-get install apt-transport-https -y
 
 - name: Add Elastic GPG key
-  shell: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+  ansible.builtin.shell: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
 
 - name: Add Elastic repository to sources list
-  shell: echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-7.x.list
+  ansible.builtin.shell: echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-7.x.list
 
 - name: Update apt cache
-  shell: apt-get update -y
+  ansible.builtin.shell: apt-get update -y
 
 - name: Install Filebeat
-  shell: apt-get install filebeat -y
+  ansible.builtin.shell: apt-get install filebeat -y
 
+- name: Create a backup of filebeat.yml
+  ansible.builtin.command:
+    cmd: cp /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.yml.backup
+    creates: /etc/filebeat/filebeat.yml.backup
+
+- name: Ensure Elasticsearch output is configured in filebeat.yml
+  ansible.builtin.replace:
+    path: /etc/filebeat/filebeat.yml
+    regexp: '^#\s*output\.elasticsearch:'
+    replace: 'output.elasticsearch:'
+    backup: yes
+
+- name: Uncomment Elasticsearch hosts configuration
+  ansible.builtin.replace:
+    path: /etc/filebeat/filebeat.yml
+    regexp: '^#\s*hosts:\s*\[\"localhost:9200\"\]'
+    replace: 'hosts: ["localhost:9200"]'
+    backup: yes
+
+- name: Comment out Logstash output section in filebeat.yml
+  ansible.builtin.lineinfile:
+    path: /etc/filebeat/filebeat.yml
+    regexp: '^output\.logstash:'
+    line: '#output.logstash:'
+    state: present
+    backup: yes
+
+- name: Comment out Logstash hosts configuration
+  ansible.builtin.replace:
+    path: /etc/filebeat/filebeat.yml
+    regexp: '^#\s*hosts:\s*\[\"localhost:5044\"\]'
+    replace: '#hosts: ["localhost:5044"]'
+    backup: yes
+
+- name: Restart Filebeat service
+  ansible.builtin.systemd:
+    name: filebeat
+    state: restarted

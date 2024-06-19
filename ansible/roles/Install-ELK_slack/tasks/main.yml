@@ -1,16 +1,36 @@
+- name: Add JAVA_HOME to /etc/environment
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: 'JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"'
+    insertafter: EOF
+  become: yes
+
+- name: Update PATH in /etc/environment
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:$PATH"'
+    insertafter: EOF
+  become: yes
+
 - name: Add the Elastic GPG key
-  ansible.builtin.shell: curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --batch --yes --dearmor -o /usr/share/keyrings/elastic.gpg
+  ansible.builtin.shell: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+  become: yes
+
+- name: Install apt-transport-https
+  apt:
+    name: apt-transport-https
+    state: present
   become: yes
 
 - name: Add the Elastic APT repository
   ansible.builtin.lineinfile:
-    path: /etc/apt/sources.list.d/elastic-7.x.list
-    line: "deb [signed-by=/usr/share/keyrings/elastic.gpg] https://artifacts.elastic.co/packages/7.x/apt stable main"
+    path: /etc/apt/sources.list.d/elastic-8.x.list
+    line: "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main"
     create: yes
   become: yes
 
 - name: Update APT package index
-  ansible.builtin.apt:
+  apt:
     update_cache: yes
   become: yes
 
@@ -18,10 +38,29 @@
   ansible.builtin.shell: sudo apt install -y elasticsearch
   become: yes
 
-- name: Install Elasticsearch
-  ansible.builtin.apt:
-    name: elasticsearch
-    state: present
+- name: copy Elasticsearch
+  ansible.builtin.shell: cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml.backup
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: '^#?network.host:'
+    line: 'network.host: 0.0.0.0'
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: '^#?discovery.seed_hosts:'
+    line: 'discovery.seed_hosts: [ ]'
+  become: yes
+
+- name: Disable xpack security
+  ansible.builtin.lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: '^#?xpack.security.enabled:'
+    line: 'xpack.security.enabled: false'
   become: yes
 
 - name: Start Elasticsearch service
@@ -36,11 +75,75 @@
     enabled: yes
   become: yes
 
+- name: Install Kibana
+  ansible.builtin.apt:
+    name: kibana
+    state: present
+  become: yes
+
+- name: Configure Kibana copy
+  ansible.builtin.shell: cp /etc/kibana/kibana.yml /etc/kibana/kibana.yml.backup
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/kibana/kibana.yml
+    regexp: '^#?server.host:'
+    line: 'server.host: "0.0.0.0"'
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/kibana/kibana.yml
+    regexp: '^#?server.port:'
+    line: 'server.port: 5601'
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/kibana/kibana.yml
+    regexp: '^#?elasticsearch.hosts:'
+    line: 'elasticsearch.hosts: ["http://localhost:9200"]'
+  become: yes
+
+- name: Start Kibana service
+  ansible.builtin.service:
+    name: kibana
+    state: started
+  become: yes
+
+- name: Enable Kibana service
+  ansible.builtin.service:
+    name: kibana
+    enabled: yes
+  become: yes
+
 - name: Install Logstash
   ansible.builtin.apt:
     name: logstash
     state: present
   become: yes
+
+- name: Configure Logstash input
+  ansible.builtin.shell: |
+    echo 'input {
+      beats {
+        port => 5044
+      }
+    }' > /etc/logstash/conf.d/beats-input.conf
+  become: yes
+
+- name: Configure Logstash output
+  ansible.builtin.shell: |
+    echo 'output {
+      elasticsearch {
+        hosts => ["localhost:9200"]
+        manage_template => false
+        index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+      }
+    }' > /etc/logstash/conf.d/beats-output.conf
+  become: yes
+
 
 - name: Start Logstash service
   ansible.builtin.service:
@@ -54,22 +157,17 @@
     enabled: yes
   become: yes
 
-- name: Install Kibana
-  ansible.builtin.apt:
-    name: kibana
-    state: present
+- name: Allow firewall ports for ELK
+  ansible.builtin.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  with_items:
+    - 9200  # Elasticsearch
+    - 5044  # Logstash
+    - 5601  # Kibana
   become: yes
 
-- name: Enable Kibana service
-  ansible.builtin.service:
-    name: kibana
-    enabled: yes
+- name: Reload UFW
+  ansible.builtin.command: ufw reload
   become: yes
-
-- name: Start Kibana service
-  ansible.builtin.service:
-    name: kibana
-    state: started
-  become: yes
-
-
