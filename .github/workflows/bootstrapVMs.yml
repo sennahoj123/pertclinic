@@ -4,7 +4,7 @@ on: push
 jobs:
   build-VMs:
     name: Setup and Configure VM
-    runs-on: iede
+    runs-on: ProvisionigVM
     
     steps:
       - name: Checkout repository
@@ -51,7 +51,7 @@ jobs:
 
   testing-VM:
     name: Bootstrap testing
-    runs-on: iede
+    runs-on: ProvisionigVM
     needs: build-VMs
     steps:
       - name: Testing Playbook
@@ -66,7 +66,7 @@ jobs:
 
   acceptance-VM:
     name: Bootstrap acceptance
-    runs-on: iede
+    runs-on: ProvisionigVM
     needs: testing-VM
     steps:
       - name: Acceptance Playbook
@@ -74,7 +74,7 @@ jobs:
   
   production-VM:
     name: Bootstrap production
-    runs-on: iede
+    runs-on: ProvisionigVM
     needs: acceptance-VM
     steps:
       - name: Production Playbook
@@ -82,7 +82,7 @@ jobs:
 
   Destroy:
     name: Terraform Destroy & rm git repo
-    runs-on: iede
+    runs-on: ProvisionigVM
     needs: production-VM
     steps:
       - name: Check out repository
