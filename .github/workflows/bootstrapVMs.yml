@@ -26,22 +26,19 @@ jobs:
         run: sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
 
       - name: Terraform Init
-        #working-directory: terraform-azure
-        run: cd /opt/pertclinic/terraform-azure terraform init
-
-      #- name: terrafrom import
-       # working-directory: terraform-azure
-        #run: |
-         # terraform import azurerm_virtual_network.az_vn /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/virtualNetworks/iede_adu-rg-vnet
-          #terraform import azurerm_network_security_group.az_sg /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkSecurityGroups/iede_adu-rg-security
+        run: |
+          cd /opt/pertclinic/terraform-azure 
+          terraform init
 
       - name: Terraform Apply
-        working-directory: terraform-azure
-        run: terraform apply -auto-approve
+        run: |
+          cd /opt/pertclinic/terraform-azure 
+          terraform apply -auto-approve
 
       - name: Output Public IP Addresses
-        working-directory: terraform-azure
-        run: sleep 10 && terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
+        run: |
+          cd /opt/pertclinic/terraform-azure 
+          sleep 10 && terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
 
       - name: Check IP Addresses File
         run: cat /opt/pertclinic/terraform-azure/ip_addresses.json
