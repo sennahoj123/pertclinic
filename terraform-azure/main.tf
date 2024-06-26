@@ -21,10 +21,46 @@ data "azurerm_subnet" "internal" {
   resource_group_name  = data.azurerm_resource_group.existing.name
 }
 
+resource "azurerm_network_interface" "vm1-nic" {
+  name                      = "vm1-nic"
+  location                  = data.azurerm_resource_group.existing.location
+  resource_group_name       = data.azurerm_resource_group.existing.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.internal.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_network_interface" "vm2-nic" {
+  name                      = "vm2-nic"
+  location                  = data.azurerm_resource_group.existing.location
+  resource_group_name       = data.azurerm_resource_group.existing.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.internal.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_network_interface" "production-nic" {
+  name                      = "production-nic"
+  location                  = data.azurerm_resource_group.existing.location
+  resource_group_name       = data.azurerm_resource_group.existing.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.internal.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
 resource "azurerm_linux_virtual_machine" "vm1" {
   name                = "VM1"
-  resource_group_name = azurerm_resource_group.existing.name
-  location            = azurerm_resource_group.existing.location
+  resource_group_name = data.azurerm_resource_group.existing.name
+  location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
   admin_username      = "adminuser"
 
@@ -51,9 +87,9 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm2" {
-  name                = "VM1"
-  resource_group_name = azurerm_resource_group.existing.name
-  location            = azurerm_resource_group.existing.location
+  name                = "VM2"  # Changed name to VM2 to avoid duplication
+  resource_group_name = data.azurerm_resource_group.existing.name
+  location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
   admin_username      = "adminuser"
 
@@ -63,7 +99,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 
   network_interface_ids = [
-    azurerm_network_interface.vm1-nic.id
+    azurerm_network_interface.vm2-nic.id
   ]
 
   os_disk {
@@ -80,9 +116,9 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 }
 
 resource "azurerm_linux_virtual_machine" "Production" {
-  name                = "VM1"
-  resource_group_name = azurerm_resource_group.existing.name
-  location            = azurerm_resource_group.existing.location
+  name                = "Production"  # Changed name to Production to avoid duplication
+  resource_group_name = data.azurerm_resource_group.existing.name
+  location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
   admin_username      = "adminuser"
 
@@ -92,7 +128,7 @@ resource "azurerm_linux_virtual_machine" "Production" {
   }
 
   network_interface_ids = [
-    azurerm_network_interface.vm1-nic.id
+    azurerm_network_interface.production-nic.id
   ]
 
   os_disk {
@@ -112,6 +148,6 @@ output "vm_public_ips" {
   value = {
     VM1        = azurerm_linux_virtual_machine.vm1.public_ip_address
     VM2        = azurerm_linux_virtual_machine.vm2.public_ip_address
-    Production = azurerm_linux_virtual_machine.production.public_ip_address
+    Production = azurerm_linux_virtual_machine.Production.public_ip_address
   }
 }
