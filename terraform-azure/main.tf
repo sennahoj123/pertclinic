@@ -1,10 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "=3.0.0"
-    }
-  }
 provider "azurerm" {
   features {}
 }
@@ -13,14 +6,12 @@ data "azurerm_resource_group" "existing" {
   name = "iede_adu-rg"
 }
 
-# Define azurerm_subnet data resource
 data "azurerm_subnet" "internal" {
-  name                 = "iede_adu-rg-subnet"  # Replace with your actual subnet name
+  name                 = "iede_adu-rg-subnet"
   virtual_network_name = "your-virtual-network-name"  # Replace with your actual VNet name
   resource_group_name  = data.azurerm_resource_group.existing.name
 }
 
-# Define azurerm_network_interface resources
 resource "azurerm_network_interface" "vm1-nic" {
   name                      = "vm1-nic"
   location                  = data.azurerm_resource_group.existing.location
@@ -57,7 +48,6 @@ resource "azurerm_network_interface" "production-nic" {
   }
 }
 
-# Define azurerm_linux_virtual_machine resources (similar to your existing setup)
 resource "azurerm_linux_virtual_machine" "vm1" {
   name                = "VM1"
   resource_group_name = data.azurerm_resource_group.existing.name
