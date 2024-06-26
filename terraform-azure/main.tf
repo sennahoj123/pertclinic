@@ -76,9 +76,17 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 }
 
-// Output block to display public IP addresses of the created resources
+# Data source to fetch public IP addresses associated with VMs
+data "azurerm_public_ip" "vm_public_ips" {
+  for_each = azurerm_linux_virtual_machine.az_vm
+
+  name                = "${each.value.name}-ip"
+  resource_group_name = data.azurerm_resource_group.existing.name
+}
+
+// Output block to display public IP addresses of the VMs
 output "public_ip_addresses" {
   value = {
-    for k, ni in azurerm_network_interface.az_ni : k => ni.ip_configuration[0].public_ip_address
+    for k, ip in data.azurerm_public_ip.vm_public_ips : k => ip.ip_address
   }
 }
