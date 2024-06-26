@@ -29,12 +29,6 @@ data "azurerm_subnet" "existing" {
   virtual_network_name = data.azurerm_virtual_network.existing.name
 }
 
-# Data block to reference existing network security group
-data "azurerm_network_security_group" "existing" {
-  name                = "iede_adu-rg-security"
-  resource_group_name = data.azurerm_resource_group.existing.name
-}
-
 # Network interfaces for VMs
 resource "azurerm_network_interface" "az_ni" {
   for_each            = var.vm_map
@@ -85,6 +79,6 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 // Output block to display public IP addresses of the created resources
 output "public_ip_addresses" {
   value = {
-    for k, ni in azurerm_network_interface.az_ni : k => azurerm_public_ip.vm[k].ip_address
+    for k, ni in azurerm_network_interface.az_ni : k => ni.ip_configuration[0].public_ip_address
   }
 }
