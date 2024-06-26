@@ -31,7 +31,7 @@ data "azurerm_network_security_group" "existing" {
   resource_group_name = "iede_adu-rg"
 }
 
-resource "azurerm_public_ip" "az_ip" {
+data "azurerm_public_ip" "existing" {
   for_each = var.vm_map
 
   name                = "${each.key}-ip"
@@ -55,7 +55,7 @@ resource "azurerm_network_interface" "az_ni" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.az_sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.az_ip[each.key].id
+    public_ip_address_id          = azurerm_public_ip.existing[each.key].id
   }
 }
 
