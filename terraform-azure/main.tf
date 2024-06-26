@@ -83,3 +83,8 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 }
 
+output "public_ip_addresses" {
+  value = {
+    for key, public_ip in data.azurerm_public_ip.existing : key => public_ip.ip_address
+  }
+}
