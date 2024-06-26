@@ -11,45 +11,31 @@ provider "azurerm" {
   features {}
 }
 
+# Data block to reference existing resource group
 data "azurerm_resource_group" "existing" {
   name = "iede_adu-rg"
 }
 
+# Data block to reference existing virtual network
 data "azurerm_virtual_network" "existing" {
-  name                = "iede_adu-rg-vnet"  // Name of your existing virtual network
+  name                = "iede_adu-rg-vnet"
   resource_group_name = data.azurerm_resource_group.existing.name
 }
 
+# Data block to reference existing subnet
 data "azurerm_subnet" "existing" {
   name                 = "iede_adu-rg-subnet"
   resource_group_name  = data.azurerm_resource_group.existing.name
   virtual_network_name = data.azurerm_virtual_network.existing.name
 }
 
+# Data block to reference existing network security group
 data "azurerm_network_security_group" "existing" {
   name                = "iede_adu-rg-security"
   resource_group_name = data.azurerm_resource_group.existing.name
 }
 
-resource "azurerm_network_security_rule" "az_sr" {
-  name                        = "iede_adu-rg-rule"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = data.azurerm_resource_group.existing.name
-  network_security_group_name = data.azurerm_network_security_group.existing.name
-}
-
-resource "azurerm_subnet_network_security_group_association" "az_sn" {
-  subnet_id                 = data.azurerm_subnet.existing.id
-  network_security_group_id = data.azurerm_network_security_group.existing.id
-}
-
+# Public IPs for VMs
 resource "azurerm_public_ip" "az_ip" {
   for_each = var.vm_map
 
@@ -63,6 +49,7 @@ resource "azurerm_public_ip" "az_ip" {
   }
 }
 
+# Network interfaces for VMs
 resource "azurerm_network_interface" "az_ni" {
   for_each            = var.vm_map
 
@@ -78,6 +65,7 @@ resource "azurerm_network_interface" "az_ni" {
   }
 }
 
+# Virtual Machines
 resource "azurerm_linux_virtual_machine" "az_vm" {
   for_each = var.vm_map
 
