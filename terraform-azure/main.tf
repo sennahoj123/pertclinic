@@ -89,6 +89,3 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 }
 
-output "public_ip_addresses" {
-  value = { for k, v in azurerm_public_ip.az_ip : k => v.ip_address }
-}
