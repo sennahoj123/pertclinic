@@ -29,11 +29,11 @@ jobs:
         working-directory: terraform-azure
         run: terraform init
 
-      - name: terrafrom import
-        working-directory: terraform-azure
-        run: |
-          terraform import azurerm_virtual_network.az_vn /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/virtualNetworks/iede_adu-rg-vnet
-          terraform import azurerm_network_security_group.az_sg /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkSecurityGroups/iede_adu-rg-security
+      #- name: terrafrom import
+       # working-directory: terraform-azure
+        #run: |
+         # terraform import azurerm_virtual_network.az_vn /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/virtualNetworks/iede_adu-rg-vnet
+          #terraform import azurerm_network_security_group.az_sg /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg/providers/Microsoft.Network/networkSecurityGroups/iede_adu-rg-security
 
       - name: Terraform Apply
         working-directory: terraform-azure
