@@ -85,6 +85,6 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 // Output block to display public IP addresses of the created resources
 output "public_ip_addresses" {
   value = {
-    for k, vm in azurerm_linux_virtual_machine.az_vm : k => azurerm_public_ip.vm.network_interface_ids[0]
+    for k, vm in azurerm_linux_virtual_machine.az_vm : k => azurerm_public_ip.vm[k].ip_address
   }
 }
