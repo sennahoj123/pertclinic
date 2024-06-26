@@ -16,8 +16,8 @@ data "azurerm_resource_group" "existing" {
 }
 
 data "azurerm_subnet" "internal" {
-  name                 = "internal"
-  virtual_network_name = "iede_adu-rg-vnet"  # Replace with your existing virtual network name
+  name                 = "iede_adu-rg-subnet"
+  virtual_network_name = "iede_adu-rg-vnet"
   resource_group_name  = data.azurerm_resource_group.existing.name
 }
 
@@ -28,7 +28,7 @@ resource "azurerm_network_interface" "vm1-nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id  # Corrected reference
+    subnet_id                     = data.azurerm_subnet.internal.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -40,7 +40,7 @@ resource "azurerm_network_interface" "vm2-nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id  # Corrected reference
+    subnet_id                     = data.azurerm_subnet.internal.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -52,7 +52,7 @@ resource "azurerm_network_interface" "production-nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id  # Corrected reference
+    subnet_id                     = data.azurerm_subnet.internal.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -80,8 +80,8 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    offer     = "UbuntuServer"
+    sku       = "20_04-lts"  # Updated SKU to match Canonical's format
     version   = "latest"
   }
 }
@@ -109,8 +109,8 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    offer     = "UbuntuServer"
+    sku       = "20_04-lts"  # Updated SKU to match Canonical's format
     version   = "latest"
   }
 }
@@ -138,8 +138,8 @@ resource "azurerm_linux_virtual_machine" "production" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    offer     = "UbuntuServer"
+    sku       = "20_04-lts"  # Updated SKU to match Canonical's format
     version   = "latest"
   }
 }
