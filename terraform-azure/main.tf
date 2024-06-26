@@ -132,5 +132,4 @@ output "vm_public_ips" {
     VM2        = azurerm_linux_virtual_machine.vm2.public_ip_address
     Production = azurerm_linux_virtual_machine.production.public_ip_address
   }
-  json = true
 }
