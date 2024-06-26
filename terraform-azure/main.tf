@@ -50,7 +50,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "vm1" {
+resource "azurerm_linux_virtual_machine" "vm2" {
   name                = "VM1"
   resource_group_name = azurerm_resource_group.existing.name
   location            = azurerm_resource_group.existing.location
@@ -79,7 +79,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "vm1" {
+resource "azurerm_linux_virtual_machine" "Production" {
   name                = "VM1"
   resource_group_name = azurerm_resource_group.existing.name
   location            = azurerm_resource_group.existing.location
