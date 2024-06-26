@@ -21,14 +21,14 @@ data "azurerm_virtual_network" "existing" {
 }
 
 data "azurerm_subnet" "az_sn" {
-  name                = "iede_adu-rg-subnet"
-  virtual_network_name = "iede_adu-rg-vnet"
-  resource_group_name = "iede_adu-rg"
+  name                 = "iede_adu-rg-subnet"
+  virtual_network_name = data.azurerm_virtual_network.existing.name
+  resource_group_name  = data.azurerm_resource_group.existing.name
 }
 
 data "azurerm_network_security_group" "existing" {
   name                = "iede_adu-rg-security"
-  resource_group_name = "iede_adu-rg"
+  resource_group_name = data.azurerm_resource_group.existing.name
 }
 
 data "azurerm_public_ip" "existing" {
@@ -36,12 +36,6 @@ data "azurerm_public_ip" "existing" {
 
   name                = "${each.key}-ip"
   resource_group_name = data.azurerm_resource_group.existing.name
-  location            = data.azurerm_resource_group.existing.location
-  allocation_method   = "Dynamic"
-
-  tags = {
-    environment = "dev"
-  }
 }
 
 resource "azurerm_network_interface" "az_ni" {
@@ -55,7 +49,7 @@ resource "azurerm_network_interface" "az_ni" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.az_sn.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.existing[each.key].id
+    public_ip_address_id          = data.azurerm_public_ip.existing[each.key].id
   }
 }
 
