@@ -15,6 +15,12 @@ data "azurerm_resource_group" "existing" {
   name = "iede_adu-rg"
 }
 
+data "azurerm_subnet" "internal" {
+  name                 = "iede_adu-rg-subnet"
+  resource_group_name  = data.azurerm_resource_group.existing.name
+  virtual_network_name = azurerm_virtual_network.az_vn.name
+}
+
 resource "azurerm_virtual_network" "az_vn" {
   name                = "iede_adu-rg-vnet"
   resource_group_name = data.azurerm_resource_group.existing.name
@@ -76,7 +82,7 @@ resource "azurerm_network_interface" "az_ni" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.az_sn.id
+    subnet_id                     = data.azurerm_subnet.internal.id  # Use the data block for subnet ID
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.az_ip[each.key].id
   }
