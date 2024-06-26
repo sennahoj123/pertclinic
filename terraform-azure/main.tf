@@ -50,13 +50,6 @@ resource "azurerm_subnet_network_security_group_association" "az_sn" {
   network_security_group_id = data.azurerm_network_security_group.existing.id
 }
 
-variable "vm_map" {
-  description = "Map of virtual machine configurations"
-  type        = map(object({
-    name = string
-  }))
-}
-
 resource "azurerm_public_ip" "az_ip" {
   for_each = var.vm_map
 
