@@ -36,16 +36,16 @@ data "azurerm_network_security_group" "existing" {
 }
 
 # Data block to reference existing public IP addresses
-data "azurerm_public_ip" "existing" {
-  for_each = {
-    production = "production-ip",
-    vm1       = "vm1-ip",
-    vm2       = "vm2-ip"
-  }
+#data "azurerm_public_ip" "existing" {
+ # for_each = {
+  #  production = "production-ip",
+   # vm1       = "vm1-ip",
+    #vm2       = "vm2-ip"
+  #}
 
-  name                = each.value
-  resource_group_name = data.azurerm_resource_group.existing.name
-}
+#  name                = each.value
+ # resource_group_name = data.azurerm_resource_group.existing.name
+#}
 
 # Network interfaces for VMs
 resource "azurerm_network_interface" "az_ni" {
