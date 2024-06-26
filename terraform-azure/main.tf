@@ -21,7 +21,7 @@ data "azurerm_subnet" "internal" {
   resource_group_name  = data.azurerm_resource_group.existing.name
 }
 
-resource "azurerm_network_interface" "vm1-nic" {
+data "azurerm_network_interface" "vm1-nic" {
   name                      = "vm1-nic"
   location                  = data.azurerm_resource_group.existing.location
   resource_group_name       = data.azurerm_resource_group.existing.name
@@ -33,7 +33,7 @@ resource "azurerm_network_interface" "vm1-nic" {
   }
 }
 
-resource "azurerm_network_interface" "vm2-nic" {
+data "azurerm_network_interface" "vm2-nic" {
   name                      = "vm2-nic"
   location                  = data.azurerm_resource_group.existing.location
   resource_group_name       = data.azurerm_resource_group.existing.name
@@ -45,7 +45,7 @@ resource "azurerm_network_interface" "vm2-nic" {
   }
 }
 
-resource "azurerm_network_interface" "production-nic" {
+data "azurerm_network_interface" "production-nic" {
   name                      = "production-nic"
   location                  = data.azurerm_resource_group.existing.location
   resource_group_name       = data.azurerm_resource_group.existing.name
