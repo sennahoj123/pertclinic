@@ -18,19 +18,19 @@
     cmd: cp /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.yml.backup
     creates: /etc/filebeat/filebeat.yml.backup
 
-- name: Ensure Elasticsearch output is configured in filebeat.yml
-  ansible.builtin.replace:
+- name: Add tomcat-logs to Filebeat inputs
+  ansible.builtin.blockinfile:
     path: /etc/filebeat/filebeat.yml
-    regexp: '^#\s*output\.elasticsearch:'
-    replace: 'output.elasticsearch:'
-    backup: yes
-
-- name: Uncomment Elasticsearch hosts configuration
-  ansible.builtin.replace:
-    path: /etc/filebeat/filebeat.yml
-    regexp: '^#\s*hosts:\s*\[\"localhost:9200\"\]'
-    replace: 'hosts: ["localhost:9200"]'
-    backup: yes
+    block: |
+      - type: log
+        id: tomcat-logs
+        enabled: true
+        paths:
+          - /opt/tomcat/logs/*.log
+          - /opt/tomcat/logs/*.txt
+          - /opt/tomcat/logs/*.out
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item }}"
+  tags: filebeat
 
 - name: Comment out Logstash output section in filebeat.yml
   ansible.builtin.lineinfile:
@@ -49,70 +49,7 @@
 
 - name: Enable modules
   ansible.builtin.shell: |
-    sudo filebeat modules enable elasticsearch
-    sudo filebeat modules enable kibana
-    sudo filebeat modules enable logstash
-
-- name: Configure Elasticsearch module
-  ansible.builtin.copy:
-    dest: /etc/filebeat/modules.d/elasticsearch.yml
-    content: |
-      - module: elasticsearch
-        # Server log
-        server:
-          enabled: true
-          var.paths: ["/var/log/elasticsearch/elasticsearch_server.log"]
-
-        gc:
-          enabled: true
-          var.paths: ["/var/log/elasticsearch/elasticsearch_gc.log"]
-
-        audit:
-          enabled: true
-          var.paths: ["/var/log/elasticsearch/elasticsearch_audit.log"]
-
-        slowlog:
-          enabled: true
-          var.paths: ["/var/log/elasticsearch/elasticsearch_slowlog.log"]
-
-        deprecation:
-          enabled: true
-          var.paths: ["/var/log/elasticsearch/elasticsearch_deprecation.log"]
-
-- name: Configure Kibana module
-  ansible.builtin.copy:
-    dest: /etc/filebeat/modules.d/kibana.yml
-    content: |
-      - module: kibana
-        # Access logs
-        access:
-          enabled: true
-          var.paths: ["/var/log/kibana/kibana_access.log"]
-
-        # Error logs
-        error:
-          enabled: true
-          var.paths: ["/var/log/kibana/kibana_error.log"]
-
-        # Kibana log
-        log:
-          enabled: true
-          var.paths: ["/var/log/kibana/kibana.log"]
-
-- name: Configure Logstash module
-  ansible.builtin.copy:
-    dest: /etc/filebeat/modules.d/logstash.yml
-    content: |
-      - module: logstash
-        # Logstash log
-        log:
-          enabled: true
-          var.paths: ["/var/log/logstash/logstash-plain.log"]
-
-        # Logstash slow logs
-        slowlog:
-          enabled: true
-          var.paths: ["/var/log/logstash/logstash-slowlog-plain.log"]
+    sudo filebeat modules enable tomcat
 
 - name: Restart Filebeat service
   ansible.builtin.systemd:
@@ -123,3 +60,34 @@
   ansible.builtin.systemd:
     name: filebeat
     enabled: yes
+
+- name: Update apt cache
+  ansible.builtin.shell: apt-get update -y
+
+- name: Install Metricbeat
+  ansible.builtin.shell: apt-get install metricbeat -y
+
+- name: Create a backup of metricbeat.yml
+  ansible.builtin.command:
+    cmd: cp /etc/metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.yml.backup
+    creates: /etc/metricbeat/metricbeat.yml.backup
+
+- name: Configure Metricbeat
+  ansible.builtin.copy:
+    src: /path/to/your/metricbeat.yml
+    dest: /etc/metricbeat/metricbeat.yml
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Metricbeat service
+
+- name: Enable Metricbeat modules
+  ansible.builtin.shell: metricbeat modules enable system
+  notify: Restart Metricbeat service
+
+handlers:
+  - name: Restart Metricbeat service
+    ansible.builtin.systemd:
+      name: metricbeat
+      state: restarted
+      enabled: yes

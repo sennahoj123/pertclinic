@@ -103,24 +103,26 @@
     state: present
   become: yes
 
-- name: Configure Logstash input
-  ansible.builtin.shell: |
-    echo 'input {
-      beats {
-        port => 5044
+- name: Configure Logstash input and output
+  ansible.builtin.shell:
+    cmd: >
+      echo 'input {
+        beats {
+          port => 5044
+        }
       }
-    }' > /etc/logstash/conf.d/beats-input.conf
-  become: yes
 
-- name: Configure Logstash output
-  ansible.builtin.shell: |
-    echo 'output {
-      elasticsearch {
-        hosts => ["localhost:9200"]
-        manage_template => false
-        index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
-      }
-    }' > /etc/logstash/conf.d/beats-output.conf
+      output {
+        elasticsearch {
+          hosts => ["http://74.234.232.208:9200"]
+          user => "elastic"
+          password => "SXbgo4we4tPcO83iP=q4"
+          ssl => true
+          cacert => "/etc/logstash/http_ca.crt"
+          index => "logstashvm-%{+YYYY.MM.dd}"
+        }
+        stdout { codec => rubydebug }
+      }' > /etc/logstash/conf.d/logstash.conf
   become: yes
 
 - name: Start Logstash service
@@ -149,3 +151,10 @@
 - name: Reload UFW
   ansible.builtin.command: ufw reload
   become: yes
+
+
+
+
+
+
+

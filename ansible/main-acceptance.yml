@@ -1,6 +1,6 @@
 ## playbook to execute selenium vm
 - name: install testing vm
-  hosts: vm1
+  hosts: Acceptance
   become: yes
   remote_user: adminuser
   roles:
