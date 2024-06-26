@@ -48,7 +48,7 @@ resource "azurerm_network_security_rule" "az_sr" {
 
 resource "azurerm_subnet_network_security_group_association" "az_sn" {
   subnet_id                 = azurerm_subnet.az_sn.id
-  network_security_group_id = azurerm_network_security_group.az_sg.id
+  network_security_group_id = data.azurerm_network_security_group.existing.id
 }
 
 resource "azurerm_public_ip" "az_ip" {
