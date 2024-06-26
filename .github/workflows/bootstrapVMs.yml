@@ -30,6 +30,11 @@ jobs:
           cd /opt/pertclinic/terraform-azure 
           terraform init
 
+      - name: import
+        run: |
+          cd /opt/pertclinic/terraform-azure
+          terraform import azurerm_resource_group.existing /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg
+
       - name: Terraform Apply
         run: |
           cd /opt/pertclinic/terraform-azure 
