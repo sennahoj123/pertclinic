@@ -13,7 +13,6 @@ provider "azurerm" {
 
 data "azurerm_resource_group" "existing" {
   name     = "iede_adu-rg"
-  location = "West Europe"  # Replace with the actual location of your resource group
 }
 
 data "azurerm_subnet" "internal" {
@@ -25,12 +24,12 @@ data "azurerm_subnet" "internal" {
 resource "azurerm_linux_virtual_machine" "vm1" {
   name                = "VM1"
   resource_group_name = azurerm_resource_group.existing.name
-  location            = azurerm_resource_group.existing.location
+  location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
-  admin_username      = "adminuser"  # Replace with your desired admin username
+  admin_username      = "adminuser"
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("~/.ssh/id_rsa.pub")  # Replace with the path to your SSH public key
+    public_key = file("~/.ssh/id_rsa.pub")
   }
   network_interface_ids = [azurerm_network_interface.vm1-nic.id]
   os_disk {
@@ -48,12 +47,12 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 resource "azurerm_linux_virtual_machine" "vm2" {
   name                = "VM2"
   resource_group_name = azurerm_resource_group.existing.name
-  location            = azurerm_resource_group.existing.location
+  location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
-  admin_username      = "adminuser"  # Replace with your desired admin username
+  admin_username      = "adminuser"
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("~/.ssh/id_rsa.pub")  # Replace with the path to your SSH public key
+    public_key = file("~/.ssh/id_rsa.pub")
   }
   network_interface_ids = [azurerm_network_interface.vm2-nic.id]
   os_disk {
@@ -71,12 +70,12 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 resource "azurerm_linux_virtual_machine" "production" {
   name                = "Production"
   resource_group_name = azurerm_resource_group.existing.name
-  location            = azurerm_resource_group.existing.location
+  location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
-  admin_username      = "adminuser"  # Replace with your desired admin username
+  admin_username      = "adminuser"
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("~/.ssh/id_rsa.pub")  # Replace with the path to your SSH public key
+    public_key = file("~/.ssh/id_rsa.pub")
   }
   network_interface_ids = [azurerm_network_interface.production-nic.id]
   os_disk {
