@@ -47,8 +47,7 @@ resource "azurerm_network_interface" "az_ni" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.existing.id
     private_ip_address_allocation = "Dynamic"
-    // Remove this line since you are not referencing existing public IPs
-    // public_ip_address_id          = data.azurerm_public_ip.existing[each.key].id
+    // No need to specify public_ip_address_id here since we're creating new public IPs
   }
 }
 
@@ -89,4 +88,3 @@ output "public_ip_addresses" {
     for k, vm in azurerm_linux_virtual_machine.az_vm : k => azurerm_public_ip.vm.network_interface_ids[0]
   }
 }
-`` used
