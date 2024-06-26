@@ -22,39 +22,18 @@ data "azurerm_subnet" "internal" {
 }
 
 data "azurerm_network_interface" "vm1-nic" {
-  name                      = "vm1-nic"
-  location                  = data.azurerm_resource_group.existing.location
-  resource_group_name       = data.azurerm_resource_group.existing.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id
-    private_ip_address_allocation = "Dynamic"
-  }
+  name                = "vm1-nic"
+  resource_group_name = data.azurerm_resource_group.existing.name
 }
 
 data "azurerm_network_interface" "vm2-nic" {
-  name                      = "vm2-nic"
-  location                  = data.azurerm_resource_group.existing.location
-  resource_group_name       = data.azurerm_resource_group.existing.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id
-    private_ip_address_allocation = "Dynamic"
-  }
+  name                = "vm2-nic"
+  resource_group_name = data.azurerm_resource_group.existing.name
 }
 
 data "azurerm_network_interface" "production-nic" {
-  name                      = "production-nic"
-  location                  = data.azurerm_resource_group.existing.location
-  resource_group_name       = data.azurerm_resource_group.existing.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id
-    private_ip_address_allocation = "Dynamic"
-  }
+  name                = "production-nic"
+  resource_group_name = data.azurerm_resource_group.existing.name
 }
 
 resource "azurerm_linux_virtual_machine" "vm1" {
@@ -70,7 +49,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   }
 
   network_interface_ids = [
-    azurerm_network_interface.vm1-nic.id
+    data.azurerm_network_interface.vm1-nic.id
   ]
 
   os_disk {
@@ -80,8 +59,8 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    offer     = "UbuntuServer"
+    sku       = "24_04-lts"
     version   = "latest"
   }
 }
@@ -99,7 +78,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 
   network_interface_ids = [
-    azurerm_network_interface.vm2-nic.id
+    data.azurerm_network_interface.vm2-nic.id
   ]
 
   os_disk {
@@ -109,8 +88,8 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    offer     = "UbuntuServer"
+    sku       = "24_04-lts"
     version   = "latest"
   }
 }
@@ -128,7 +107,7 @@ resource "azurerm_linux_virtual_machine" "production" {
   }
 
   network_interface_ids = [
-    azurerm_network_interface.production-nic.id
+    data.azurerm_network_interface.production-nic.id
   ]
 
   os_disk {
@@ -138,8 +117,8 @@ resource "azurerm_linux_virtual_machine" "production" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    offer     = "UbuntuServer"
+    sku       = "24_04-lts"
     version   = "latest"
   }
 }
