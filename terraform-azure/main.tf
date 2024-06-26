@@ -35,18 +35,6 @@ data "azurerm_network_security_group" "existing" {
   resource_group_name = data.azurerm_resource_group.existing.name
 }
 
-# Data block to reference existing public IP addresses
-#data "azurerm_public_ip" "existing" {
- # for_each = {
-  #  production = "production-ip",
-   # vm1       = "vm1-ip",
-    #vm2       = "vm2-ip"
-  #}
-
-#  name                = each.value
- # resource_group_name = data.azurerm_resource_group.existing.name
-#}
-
 # Network interfaces for VMs
 resource "azurerm_network_interface" "az_ni" {
   for_each            = var.vm_map
@@ -59,7 +47,8 @@ resource "azurerm_network_interface" "az_ni" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.existing.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = data.azurerm_public_ip.existing[each.key].id
+    // Remove this line since you are not referencing existing public IPs
+    // public_ip_address_id          = data.azurerm_public_ip.existing[each.key].id
   }
 }
 
@@ -94,6 +83,10 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 }
 
+// Output block to display public IP addresses of the created resources
 output "public_ip_addresses" {
-  value = { for k, v in data.azurerm_public_ip.existing : k => v.ip_address }
+  value = {
+    for k, vm in azurerm_linux_virtual_machine.az_vm : k => azurerm_public_ip.vm.network_interface_ids[0]
+  }
 }
+`` used
