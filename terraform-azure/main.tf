@@ -31,25 +31,6 @@ data "azurerm_network_security_group" "existing" {
   resource_group_name = "iede_adu-rg"
 }
 
-resource "azurerm_network_security_rule" "az_sr" {
-  name                        = "iede_adu-rg-rule"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = data.azurerm_resource_group.existing.name
-  network_security_group_name = data.azurerm_network_security_group.existing.name
-}
-
-resource "azurerm_subnet_network_security_group_association" "az_sn" {
-  subnet_id                 = data.azurerm_subnet.az_sn.id
-  network_security_group_id = data.azurerm_network_security_group.existing.id
-}
-
 resource "azurerm_public_ip" "az_ip" {
   for_each = var.vm_map
 
