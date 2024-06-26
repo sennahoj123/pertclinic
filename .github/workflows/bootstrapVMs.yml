@@ -26,8 +26,8 @@ jobs:
         run: sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
 
       - name: Terraform Init
-        #working-directory: terraform-azure
-        run: cd /opt/pertclinic/terraform-azure terraform init
+        working-directory: terraform-azure
+        run: terraform init
 
       #- name: terrafrom import
        # working-directory: terraform-azure
