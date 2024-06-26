@@ -1,84 +1,9 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "=3.0.0"
-    }
-  }
-}
-
 provider "azurerm" {
   features {}
 }
 
 data "azurerm_resource_group" "existing" {
   name = "iede_adu-rg"
-}
-
-data "azurerm_subnet" "internal" {
-  name                 = "iede_adu-rg-subnet"
-  virtual_network_name = "iede_adu-rg-vnet"
-  resource_group_name  = data.azurerm_resource_group.existing.name
-}
-
-resource "azurerm_public_ip" "vm1_public_ip" {
-  name                = "vm1PublicIP"
-  resource_group_name = data.azurerm_resource_group.existing.name
-  location            = data.azurerm_resource_group.existing.location
-  allocation_method   = "Dynamic"
-}
-
-resource "azurerm_public_ip" "vm2_public_ip" {
-  name                = "vm2PublicIP"
-  resource_group_name = data.azurerm_resource_group.existing.name
-  location            = data.azurerm_resource_group.existing.location
-  allocation_method   = "Dynamic"
-}
-
-resource "azurerm_public_ip" "production_public_ip" {
-  name                = "productionPublicIP"
-  resource_group_name = data.azurerm_resource_group.existing.name
-  location            = data.azurerm_resource_group.existing.location
-  allocation_method   = "Dynamic"
-}
-
-resource "azurerm_network_interface" "vm1-nic" {
-  name                = "vm1-nic"
-  location            = data.azurerm_resource_group.existing.location
-  resource_group_name = data.azurerm_resource_group.existing.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vm1_public_ip.id
-  }
-}
-
-resource "azurerm_network_interface" "vm2-nic" {
-  name                = "vm2-nic"
-  location            = data.azurerm_resource_group.existing.location
-  resource_group_name = data.azurerm_resource_group.existing.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vm2_public_ip.id
-  }
-}
-
-resource "azurerm_network_interface" "production-nic" {
-  name                = "production-nic"
-  location            = data.azurerm_resource_group.existing.location
-  resource_group_name = data.azurerm_resource_group.existing.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.internal.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.production_public_ip.id
-  }
 }
 
 resource "azurerm_linux_virtual_machine" "vm1" {
@@ -170,8 +95,8 @@ resource "azurerm_linux_virtual_machine" "production" {
 
 output "vm_public_ips" {
   value = {
-    VM1        = azurerm_public_ip.vm1_public_ip.ip_address
-    VM2        = azurerm_public_ip.vm2_public_ip.ip_address
-    Production = azurerm_public_ip.production_public_ip.ip_address
+    VM1        = azurerm_linux_virtual_machine.vm1.public_ip_address
+    VM2        = azurerm_linux_virtual_machine.vm2.public_ip_address
+    Production = azurerm_linux_virtual_machine.production.public_ip_address
   }
 }
