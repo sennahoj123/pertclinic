@@ -12,18 +12,18 @@ provider "azurerm" {
 }
 
 data "azurerm_resource_group" "existing" {
-  name     = "iede_adu-rg"
+  name = "iede_adu-rg"
 }
 
 data "azurerm_subnet" "internal" {
   name                 = "internal"
-  virtual_network_name = "example-network"  # Replace with your existing virtual network name
-  resource_group_name  = azurerm_resource_group.existing.name
+  virtual_network_name = "iede_adu-rg-vnet"  # Replace with your existing virtual network name
+  resource_group_name  = data.azurerm_resource_group.existing.name
 }
 
 resource "azurerm_linux_virtual_machine" "vm1" {
   name                = "VM1"
-  resource_group_name = azurerm_resource_group.existing.name
+  resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
   admin_username      = "adminuser"
@@ -46,7 +46,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
 resource "azurerm_linux_virtual_machine" "vm2" {
   name                = "VM2"
-  resource_group_name = azurerm_resource_group.existing.name
+  resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
   admin_username      = "adminuser"
@@ -69,7 +69,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
 resource "azurerm_linux_virtual_machine" "production" {
   name                = "Production"
-  resource_group_name = azurerm_resource_group.existing.name
+  resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
   admin_username      = "adminuser"
