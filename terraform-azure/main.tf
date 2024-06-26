@@ -17,7 +17,7 @@ data "azurerm_resource_group" "existing" {
 
 data "azurerm_subnet" "internal" {
   name                 = "iede_adu-rg-subnet"
-  virtual_network_name = "your-virtual-network-name"  # Replace with your actual VNet name
+  virtual_network_name = "iede_adu-rg-vnet" 
   resource_group_name  = data.azurerm_resource_group.existing.name
 }
 
