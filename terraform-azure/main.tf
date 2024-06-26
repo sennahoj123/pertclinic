@@ -28,7 +28,7 @@ resource "azurerm_network_interface" "vm1-nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.internal.id
+    subnet_id                     = data.azurerm_subnet.internal.id  # Corrected reference
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -40,7 +40,7 @@ resource "azurerm_network_interface" "vm2-nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.internal.id
+    subnet_id                     = data.azurerm_subnet.internal.id  # Corrected reference
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -52,7 +52,7 @@ resource "azurerm_network_interface" "production-nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.internal.id
+    subnet_id                     = data.azurerm_subnet.internal.id  # Corrected reference
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -87,7 +87,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm2" {
-  name                = "VM2"  # Changed name to VM2 to avoid duplication
+  name                = "VM2"
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
@@ -115,8 +115,8 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "Production" {
-  name                = "Production"  # Changed name to Production to avoid duplication
+resource "azurerm_linux_virtual_machine" "production" {
+  name                = "Production"
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   size                = "Standard_B2s"
@@ -148,6 +148,6 @@ output "vm_public_ips" {
   value = {
     VM1        = azurerm_linux_virtual_machine.vm1.public_ip_address
     VM2        = azurerm_linux_virtual_machine.vm2.public_ip_address
-    Production = azurerm_linux_virtual_machine.Production.public_ip_address
+    Production = azurerm_linux_virtual_machine.production.public_ip_address
   }
 }
