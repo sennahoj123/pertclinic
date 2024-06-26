@@ -15,7 +15,7 @@ data "azurerm_resource_group" "existing" {
   name = "iede_adu-rg"
 }
 
-resource "azurerm_virtual_network" "az_vn" {
+data "azurerm_virtual_network" "existing" {
   name                = "iede_adu-rg-vnet"
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
@@ -29,7 +29,7 @@ resource "azurerm_subnet" "az_sn" {
   address_prefixes     = ["10.123.1.0/24"]
 }
 
-resource "azurerm_network_security_group" "az_sg" {
+data "azurerm_network_security_group" "existing" {
   name                = "iede_adu-rg-security"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
