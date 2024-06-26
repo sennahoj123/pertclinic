@@ -15,20 +15,43 @@ data "azurerm_resource_group" "existing" {
   name = "iede_adu-rg"
 }
 
-data "azurerm_virtual_network" "existing_vn" {
+resource "azurerm_virtual_network" "az_vn" {
   name                = "iede_adu-rg-vnet"
   resource_group_name = data.azurerm_resource_group.existing.name
+  location            = data.azurerm_resource_group.existing.location
+  address_space       = ["10.123.0.0/16"]
 }
 
-data "azurerm_subnet" "existing_sn" {
+resource "azurerm_subnet" "az_sn" {
   name                 = "iede_adu-rg-subnet"
   resource_group_name  = data.azurerm_resource_group.existing.name
-  virtual_network_name = data.azurerm_virtual_network.existing_vn.name
+  virtual_network_name = azurerm_virtual_network.az_vn.name
+  address_prefixes     = ["10.123.1.0/24"]
 }
 
-data "azurerm_network_security_group" "existing_sg" {
+resource "azurerm_network_security_group" "az_sg" {
   name                = "iede_adu-rg-security"
+  location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
+}
+
+resource "azurerm_network_security_rule" "az_sr" {
+  name                        = "iede_adu-rg-rule"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.existing.name
+  network_security_group_name = azurerm_network_security_group.az_sg.name
+}
+
+resource "azurerm_subnet_network_security_group_association" "az_sn" {
+  subnet_id                 = azurerm_subnet.az_sn.id
+  network_security_group_id = azurerm_network_security_group.az_sg.id
 }
 
 resource "azurerm_public_ip" "az_ip" {
@@ -45,7 +68,7 @@ resource "azurerm_public_ip" "az_ip" {
 }
 
 resource "azurerm_network_interface" "az_ni" {
-  for_each = var.vm_map
+  for_each            = var.vm_map
 
   name                = "${each.value.name}-ni"
   location            = data.azurerm_resource_group.existing.location
@@ -53,7 +76,7 @@ resource "azurerm_network_interface" "az_ni" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.existing_sn.id
+    subnet_id                     = azurerm_subnet.az_sn.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.az_ip[each.key].id
   }

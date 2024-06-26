@@ -85,9 +85,8 @@
   ansible.builtin.shell: metricbeat modules enable system
   notify: Restart Metricbeat service
 
-handlers:
-  - name: Restart Metricbeat service
-    ansible.builtin.systemd:
-      name: metricbeat
-      state: restarted
-      enabled: yes
+- name: Restart Metricbeat service
+  ansible.builtin.systemd:
+    name: metricbeat
+    state: restarted
+    enabled: yes
