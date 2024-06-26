@@ -80,8 +80,8 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "20_04-lts"  # Updated SKU to match Canonical's format
+    offer     = "ubuntu-24_04-lts"
+    sku       = "server"
     version   = "latest"
   }
 }
@@ -109,8 +109,8 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "20_04-lts"  # Updated SKU to match Canonical's format
+    offer     = "ubuntu-24_04-lts"
+    sku       = "server"
     version   = "latest"
   }
 }
@@ -138,8 +138,8 @@ resource "azurerm_linux_virtual_machine" "production" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "20_04-lts"  # Updated SKU to match Canonical's format
+    offer     = "ubuntu-24_04-lts"
+    sku       = "server"
     version   = "latest"
   }
 }
