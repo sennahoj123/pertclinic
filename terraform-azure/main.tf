@@ -85,18 +85,10 @@ resource "azurerm_linux_virtual_machine" "production" {
 }
 
 output "vm_public_ips" {
-  value = {
+  value = jsonencode({
     VM1        = azurerm_linux_virtual_machine.vm1.public_ip_address
     VM2        = azurerm_linux_virtual_machine.vm2.public_ip_address
     Production = azurerm_linux_virtual_machine.production.public_ip_address
-  }
-
-  # Format the output as JSON-compatible string using the format() function
-  # This will produce a JSON-like structure when outputted
-  value = format("%s", jsonencode({
-    VM1        = azurerm_linux_virtual_machine.vm1.public_ip_address
-    VM2        = azurerm_linux_virtual_machine.vm2.public_ip_address
-    Production = azurerm_linux_virtual_machine.production.public_ip_address
-  }))
+  })
 }
 
