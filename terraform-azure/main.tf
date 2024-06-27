@@ -36,11 +36,29 @@ data "azurerm_network_security_group" "existing_sg" {
 }
 
 # Data block to reference existing public IP addresses
-data "azurerm_public_ip" "existing_ip" {
-  for_each            = var.vm_map
+data "azurerm_public_ip" "existing_ip_vm1" {
+  name                = "vm1-ip"
+  resource_group_name = data.azurerm_resource_group.existing.name
+}
+
+data "azurerm_public_ip" "existing_ip_vm2" {
+  name                = "vm2-ip"
+  resource_group_name = data.azurerm_resource_group.existing.name
+}
+
+data "azurerm_public_ip" "existing_ip_production" {
+  name                = "production-ip"
+  resource_group_name = data.azurerm_resource_group.existing.name
+}
+
+# Create new public IP addresses if they do not exist
+resource "azurerm_public_ip" "az_ip" {
+  for_each = var.vm_map
 
   name                = "${each.value.name}-ip"
   resource_group_name = data.azurerm_resource_group.existing.name
+  location            = data.azurerm_resource_group.existing.location
+  allocation_method   = "Dynamic"
 }
 
 # Network interfaces for VMs
@@ -55,7 +73,10 @@ resource "azurerm_network_interface" "az_ni" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.existing_subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = data.azurerm_public_ip.existing_ip[each.key].id
+    public_ip_address_id = try(data.azurerm_public_ip.existing_ip_vm1.id, 
+                               try(data.azurerm_public_ip.existing_ip_vm2.id, 
+                               try(data.azurerm_public_ip.existing_ip_production.id, 
+                               azurerm_public_ip.az_ip[each.key].id)))
   }
 }
 
@@ -84,17 +105,24 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts"
+    offer     = "ubuntu-24_04-lts"
+    sku       = "server"
     version   = "latest"
   }
 
   provisioner "local-exec" {
-    command = "echo ${data.azurerm_public_ip.existing_ip[each.key].ip_address} >> public_ips.txt"
+    command = "echo ${try(data.azurerm_public_ip.existing_ip_vm1.ip_address, 
+                         try(data.azurerm_public_ip.existing_ip_vm2.ip_address, 
+                         try(data.azurerm_public_ip.existing_ip_production.ip_address, 
+                         azurerm_public_ip.az_ip[each.key].ip_address)))} >> public_ips.txt"
   }
 }
 
 # Output block to print public IP addresses
 output "public_ip_addresses" {
-  value = { for k, v in data.azurerm_public_ip.existing_ip : k => v.ip_address }
+  value = { 
+    "vm1"        = try(data.azurerm_public_ip.existing_ip_vm1.ip_address, null)
+    "vm2"        = try(data.azurerm_public_ip.existing_ip_vm2.ip_address, null)
+    "production" = try(data.azurerm_public_ip.existing_ip_production.ip_address, null)
+  }
 }
