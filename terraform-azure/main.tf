@@ -94,10 +94,15 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${azurerm_public_ip.az_ip[each.key].ip_address} >> public_ips.txt"
+    command = <<-EOT
+      echo "Executing provisioner for ${each.key}"
+      echo "Public IP Address: ${azurerm_public_ip.az_ip[each.key].ip_address}"
+      echo "${azurerm_public_ip.az_ip[each.key].ip_address}" >> /opt/pertclinic/terraform-azure/public_ips.txt
+    EOT
+
+    working_dir = "/opt/pertclinic/terraform-azure"  # Optionally specify the working directory for the command
   }
 }
-
 # Output block to print public IP addresses
 output "public_ip_addresses" {
   value = {

@@ -22,9 +22,14 @@ jobs:
       - name: Set ownership of directory
         run: sudo chown adminuser:adminuser /opt/pertclinic
       
-      - name: Clone repo
-        run: sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
-
+       - name: Clone or pull repo
+        run: |
+          if [ -d "/opt/pertclinic/.git" ]; then
+            sudo -u adminuser git -C /opt/pertclinic pull
+          else
+            sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
+          fi
+          
       - name: Terraform Init
         run: |
           cd /opt/pertclinic/terraform-azure 
