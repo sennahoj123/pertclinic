@@ -29,29 +29,27 @@ data "azurerm_subnet" "existing_subnet" {
   virtual_network_name = data.azurerm_virtual_network.existing_vn.name
 }
 
-# Data block to reference existing network security group
-data "azurerm_network_security_group" "existing_sg" {
-  name                = "iede_adu-rg-security"
-  resource_group_name = data.azurerm_resource_group.existing.name
-}
-
 # Create new public IP addresses for VMs
 resource "azurerm_public_ip" "az_ip" {
-  for_each = {
-    vm1 = "vm1-ip",
-    vm2 = "vm2-ip",
+  for_each            = {
+    vm1        = "vm1-ip",
+    vm2        = "vm2-ip",
     production = "production-ip"
   }
 
-  name                = each.value
+  name                = each.value  # Use each.value for the friendly name
   resource_group_name = data.azurerm_resource_group.existing.name
   location            = data.azurerm_resource_group.existing.location
   allocation_method   = "Dynamic"
+
+  tags = {
+    environment = "dev"
+  }
 }
 
 # Network interfaces for VMs
 resource "azurerm_network_interface" "az_ni" {
-  for_each            = var.vm_map
+  for_each            = var.vm_map  # Assuming var.vm_map contains your VM configuration
 
   name                = "${each.value.name}-ni"
   location            = data.azurerm_resource_group.existing.location
@@ -67,7 +65,7 @@ resource "azurerm_network_interface" "az_ni" {
 
 # Virtual Machines
 resource "azurerm_linux_virtual_machine" "az_vm" {
-  for_each = var.vm_map
+  for_each = var.vm_map  # Assuming var.vm_map contains your VM configuration
 
   name                = each.value.name
   resource_group_name = data.azurerm_resource_group.existing.name
@@ -100,6 +98,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 }
 
+# Output block to print public IP addresses
 output "public_ip_addresses" {
   value = {
     for key, ip in azurerm_public_ip.az_ip : key => ip.ip_address
