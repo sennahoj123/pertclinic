@@ -18,19 +18,15 @@
     cmd: cp /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.yml.backup
     creates: /etc/filebeat/filebeat.yml.backup
 
-- name: Add tomcat-logs to Filebeat inputs
-  ansible.builtin.blockinfile:
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
     path: /etc/filebeat/filebeat.yml
-    block: |
-      - type: log
-        id: tomcat-logs
-        enabled: true
-        paths:
+    regexp: '^- /var/log/.*\.log'  
+    line: '- /var/log/*.log :
           - /opt/tomcat/logs/*.log
           - /opt/tomcat/logs/*.txt
-          - /opt/tomcat/logs/*.out
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-  tags: filebeat
+          - /opt/tomcat/logs/*.out'
+  become: yes
 
 - name: Comment out Logstash output section in filebeat.yml
   ansible.builtin.lineinfile:
