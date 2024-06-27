@@ -46,17 +46,19 @@
     backup: yes
 
 - name: Enable modules
-  ansible.builtin.shell: filebeat modules enable tomcat
+  ansible.builtin.shell: sudo filebeat modules enable tomcat
 
 - name: Restart Filebeat service
   ansible.builtin.systemd:
     name: filebeat
     state: restarted
+  become: yes
 
 - name: Enable Filebeat service on boot
   ansible.builtin.systemd:
     name: filebeat
     enabled: yes
+  become: yes
 
 - name: Update apt cache
   ansible.builtin.shell: apt-get update -y
