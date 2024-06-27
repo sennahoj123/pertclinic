@@ -29,6 +29,22 @@ data "azurerm_subnet" "existing" {
   virtual_network_name = data.azurerm_virtual_network.existing.name
 }
 
+# Data block to reference existing network security group
+data "azurerm_network_security_group" "existing" {
+  name                = "iede_adu-rg-security"
+  resource_group_name = data.azurerm_resource_group.existing.name
+}
+
+# Public IP addresses for VMs
+resource "azurerm_public_ip" "vm_public_ips" {
+  for_each            = var.vm_map
+
+  name                = "${each.value.name}-ip"
+  location            = data.azurerm_resource_group.existing.location
+  resource_group_name = data.azurerm_resource_group.existing.name
+  allocation_method   = "Dynamic"
+}
+
 # Network interfaces for VMs
 resource "azurerm_network_interface" "az_ni" {
   for_each            = var.vm_map
@@ -41,7 +57,7 @@ resource "azurerm_network_interface" "az_ni" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.existing.id
     private_ip_address_allocation = "Dynamic"
-    // No need to specify public_ip_address_id here since we're creating new public IPs
+    public_ip_address_id          = azurerm_public_ip.vm_public_ips[each.key].id
   }
 }
 
@@ -70,23 +86,14 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
     version   = "latest"
   }
 }
 
-# Data source to fetch public IP addresses associated with VMs
-data "azurerm_public_ip" "vm_public_ips" {
-  for_each = azurerm_linux_virtual_machine.az_vm
-
-  name                = "${each.value.name}-ip"
-  resource_group_name = data.azurerm_resource_group.existing.name
-}
-
-// Output block to display public IP addresses of the VMs
 output "public_ip_addresses" {
   value = {
-    for k, ip in data.azurerm_public_ip.vm_public_ips : k => ip.ip_address
+    for k, ip in azurerm_public_ip.vm_public_ips : k => ip.ip_address
   }
 }
