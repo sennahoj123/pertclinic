@@ -71,16 +71,6 @@
     cmd: cp /etc/metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.yml.backup
     creates: /etc/metricbeat/metricbeat.yml.backup
 
-- name: Configure Metricbeat
-  ansible.builtin.copy:
-    src: /etc/metricbeat/metricbeat.yml
-    dest: /etc/metricbeat/metricbeat.yml
-    owner: root
-    group: root
-    mode: '0644'
-  notify: Restart Metricbeat service
-  become: yes
-
 - name: Enable Metricbeat modules
   ansible.builtin.shell: metricbeat modules enable system
   notify: Restart Metricbeat service
