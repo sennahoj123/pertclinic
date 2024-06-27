@@ -11,62 +11,39 @@ provider "azurerm" {
   features {}
 }
 
+# Data block to reference existing resource group
 data "azurerm_resource_group" "existing" {
   name = "iede_adu-rg"
 }
 
-resource "azurerm_virtual_network" "az_vn" {
+# Data block to reference existing virtual network
+data "azurerm_virtual_network" "existing_vn" {
   name                = "iede_adu-rg-vnet"
   resource_group_name = data.azurerm_resource_group.existing.name
-  location            = data.azurerm_resource_group.existing.location
-  address_space       = ["10.123.0.0/16"]
 }
 
-resource "azurerm_subnet" "az_sn" {
+# Data block to reference existing subnet
+data "azurerm_subnet" "existing_subnet" {
   name                 = "iede_adu-rg-subnet"
   resource_group_name  = data.azurerm_resource_group.existing.name
-  virtual_network_name = azurerm_virtual_network.az_vn.name
-  address_prefixes     = ["10.123.1.0/24"]
+  virtual_network_name = data.azurerm_virtual_network.existing_vn.name
 }
 
-resource "azurerm_network_security_group" "az_sg" {
+# Data block to reference existing network security group
+data "azurerm_network_security_group" "existing_sg" {
   name                = "iede_adu-rg-security"
-  location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
 }
 
-resource "azurerm_network_security_rule" "az_sr" {
-  name                        = "iede_adu-rg-rule"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = data.azurerm_resource_group.existing.name
-  network_security_group_name = azurerm_network_security_group.az_sg.name
-}
+# Data block to reference existing public IP addresses
+data "azurerm_public_ip" "existing_ip" {
+  for_each            = var.vm_map
 
-resource "azurerm_subnet_network_security_group_association" "az_sn" {
-  subnet_id                 = azurerm_subnet.az_sn.id
-  network_security_group_id = azurerm_network_security_group.az_sg.id
-}
-
-resource "azurerm_public_ip" "az_ip" {
-  for_each = var.vm_map
-
-  name                = "${each.value.name}-ip"
+  name                = each.value.name
   resource_group_name = data.azurerm_resource_group.existing.name
-  location            = data.azurerm_resource_group.existing.location
-  allocation_method   = "Dynamic"
-
-  tags = {
-    environment = "dev"
-  }
 }
 
+# Network interfaces for VMs
 resource "azurerm_network_interface" "az_ni" {
   for_each            = var.vm_map
 
@@ -76,12 +53,13 @@ resource "azurerm_network_interface" "az_ni" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.az_sn.id
+    subnet_id                     = data.azurerm_subnet.existing_subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.az_ip[each.key].id
+    public_ip_address_id          = data.azurerm_public_ip.existing_ip[each.key].id
   }
 }
 
+# Virtual Machines
 resource "azurerm_linux_virtual_machine" "az_vm" {
   for_each = var.vm_map
 
@@ -112,10 +90,11 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${azurerm_public_ip.az_ip[each.key].ip_address} >> public_ips.txt"
+    command = "echo ${azurerm_public_ip.existing_ip[each.key].ip_address} >> public_ips.txt"
   }
 }
 
+# Output block to print public IP addresses
 output "public_ip_addresses" {
-  value = { for k, v in azurerm_public_ip.az_ip : k => v.ip_address }
+  value = { for k, v in data.azurerm_public_ip.existing_ip : k => v.ip_address }
 }
