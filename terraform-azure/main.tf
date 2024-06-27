@@ -39,7 +39,7 @@ data "azurerm_network_security_group" "existing_sg" {
 data "azurerm_public_ip" "existing_ip" {
   for_each            = var.vm_map
 
-  name                = each.value.name
+  name                = "${each.value.name}-ip"
   resource_group_name = data.azurerm_resource_group.existing.name
 }
 
@@ -84,13 +84,13 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
     version   = "latest"
   }
 
   provisioner "local-exec" {
-    command = "echo ${azurerm_public_ip.existing_ip[each.key].ip_address} >> public_ips.txt"
+    command = "echo ${data.azurerm_public_ip.existing_ip[each.key].ip_address} >> public_ips.txt"
   }
 }
 
