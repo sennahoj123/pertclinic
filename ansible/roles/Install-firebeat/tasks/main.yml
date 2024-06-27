@@ -73,7 +73,7 @@
 
 - name: Configure Metricbeat
   ansible.builtin.copy:
-    src: /path/to/your/metricbeat.yml
+    src: /etc/metricbeat/metricbeat.yml
     dest: /etc/metricbeat/metricbeat.yml
     owner: root
     group: root
