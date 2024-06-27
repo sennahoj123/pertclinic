@@ -100,11 +100,8 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 }
 
-# Output block to print public IP addresses
-#output "public_ip_addresses" {
- # value = { 
-  #  "vm1"        = azurerm_public_ip.az_ip["vm1-ip"].ip_address
-   # "vm2"        = azurerm_public_ip.az_ip["vm2-ip"].ip_address
-    #"production" = azurerm_public_ip.az_ip["production-ip"].ip_address
-  #}
-#}
+output "public_ip_addresses" {
+  value = {
+    for key, ip in azurerm_public_ip.az_ip : key => ip.ip_address
+  }
+}
