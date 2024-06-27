@@ -29,16 +29,22 @@ data "azurerm_subnet" "existing_subnet" {
   virtual_network_name = data.azurerm_virtual_network.existing_vn.name
 }
 
-# Data block to reference existing public IPs
-data "azurerm_public_ip" "existing_ips" {
-  for_each = {
+# Create new public IP addresses for VMs
+resource "azurerm_public_ip" "az_ip" {
+  for_each            = {
     vm1        = "vm1-ip",
     vm2        = "vm2-ip",
     production = "production-ip"
   }
 
-  name                = each.value  # Assuming each.value is the name or IP address of the existing public IP
+  name                = each.value  # Use each.value for the friendly name
   resource_group_name = data.azurerm_resource_group.existing.name
+  location            = data.azurerm_resource_group.existing.location
+  allocation_method   = "Dynamic"
+
+  tags = {
+    environment = "dev"
+  }
 }
 
 # Network interfaces for VMs
@@ -53,7 +59,7 @@ resource "azurerm_network_interface" "az_ni" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.existing_subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = data.azurerm_public_ip.existing_ips[each.key].id
+    public_ip_address_id          = azurerm_public_ip.az_ip[each.key].id
   }
 }
 
@@ -88,13 +94,13 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${data.azurerm_public_ip.existing_ips[each.key].ip_address} >> public_ips.txt"
+    command = "echo ${azurerm_public_ip.az_ip[each.key].ip_address} >> public_ips.txt"
   }
 }
 
 # Output block to print public IP addresses
 output "public_ip_addresses" {
   value = {
-    for key, ip in data.azurerm_public_ip.existing_ips : key => ip.ip_address
+    for key, ip in azurerm_public_ip.az_ip : key => ip.ip_address
   }
 }
