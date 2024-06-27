@@ -79,13 +79,16 @@
     group: root
     mode: '0644'
   notify: Restart Metricbeat service
+  become: yes
 
 - name: Enable Metricbeat modules
   ansible.builtin.shell: metricbeat modules enable system
   notify: Restart Metricbeat service
+  become: yes
 
 - name: Restart Metricbeat service
   ansible.builtin.systemd:
     name: metricbeat
     state: restarted
     enabled: yes
+  become: yes
