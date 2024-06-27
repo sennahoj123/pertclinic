@@ -46,7 +46,7 @@ resource "azurerm_public_ip" "vm_public_ips" {
 }
 
 # Network interfaces for VMs
-resource "azurerm_network_interface" "az_ni" {
+data "azurerm_network_interface" "existing" {
   for_each            = var.vm_map
 
   name                = "${each.value.name}-ni"
