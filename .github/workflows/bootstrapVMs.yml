@@ -4,62 +4,38 @@ on: push
 jobs:
   build-VMs:
     name: Setup and Configure VM
-    runs-on: ubuntu-latest
+    runs-on: iede
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create SSH directory and config file
+      - name: SSH CONFIG FILE
         run: |
-          sudo mkdir -p /home/adminuser/.ssh
-          sudo touch /home/adminuser/.ssh/config
-          echo "Host *" | sudo tee -a /home/adminuser/.ssh/config > /dev/null
-          echo "  StrictHostKeyChecking no" | sudo tee -a /home/adminuser/.ssh/config > /dev/null
-          
+          touch /home/adminuser/.ssh/config
+          echo "Host *" > /home/adminuser/.ssh/config
+          echo "  StrictHostKeyChecking no" >> /home/adminuser/.ssh/config
+
       - name: Create directory for repo
         run: sudo mkdir -p /opt/pertclinic
       
       - name: Set ownership of directory
         run: sudo chown adminuser:adminuser /opt/pertclinic
       
-      - name: Clone or pull repo
-        run: |
-          if [ -d "/opt/pertclinic/.git" ]; then
-            sudo -u adminuser git -C /opt/pertclinic pull
-          else
-            sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
-          fi
-
-      - name: Create Ansible Vault password file
-        env:
-          ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT }}
-        run: |
-          echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/vault_password
-
-      - name: Decrypt Ansible Vault
-        run: |
-          ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.pub --output /opt/pertclinic/ansible/ssh_key_decrypted.pub --vault-password-file /tmp/vault_password
+      - name: Clone repo
+        run: sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
 
       - name: Terraform Init
-        run: |
-          cd /opt/pertclinic/terraform-azure 
-          terraform init
-
-      #- name: import
-       # run: |
-        #  cd /opt/pertclinic/terraform-azure
-         # terraform import azurerm_resource_group.existing /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg
+        working-directory: terraform-azure
+        run: terraform init
 
       - name: Terraform Apply
-        run: |
-          cd /opt/pertclinic/terraform-azure 
-          terraform apply -auto-approve
+        working-directory: terraform-azure
+        run: terraform apply -auto-approve
 
       - name: Output Public IP Addresses
-        run: |
-          cd /opt/pertclinic/terraform-azure 
-          sleep 10 && terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
+        working-directory: terraform-azure
+        run: sleep 10 && terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
 
       - name: Check IP Addresses File
         run: cat /opt/pertclinic/terraform-azure/ip_addresses.json
@@ -75,7 +51,7 @@ jobs:
 
   testing-VM:
     name: Bootstrap testing
-    runs-on: ubuntu-latest
+    runs-on: iede
     needs: build-VMs
     steps:
       - name: Testing Playbook
@@ -90,7 +66,7 @@ jobs:
 
   acceptance-VM:
     name: Bootstrap acceptance
-    runs-on: ubuntu-latest
+    runs-on: iede
     needs: testing-VM
     steps:
       - name: Acceptance Playbook
@@ -98,7 +74,7 @@ jobs:
   
   production-VM:
     name: Bootstrap production
-    runs-on: ubuntu-latest
+    runs-on: iede
     needs: acceptance-VM
     steps:
       - name: Production Playbook
@@ -106,7 +82,7 @@ jobs:
 
   Destroy:
     name: Terraform Destroy & rm git repo
-    runs-on: ubuntu-latest
+    runs-on: iede
     needs: production-VM
     steps:
       - name: Check out repository
@@ -136,3 +112,4 @@ jobs:
             
       #- name: rm git repo
        # run: sudo rm -r /opt/pertclinic
+
