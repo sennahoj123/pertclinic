@@ -31,7 +31,7 @@ jobs:
           fi
 
       - name: test
-        run: ls- a /opt/pertclinic/ansible
+        run: ls -a /opt/pertclinic/ansible
 
       - name: Decrypt Ansible Vault file
         env:
