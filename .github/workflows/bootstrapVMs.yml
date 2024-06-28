@@ -30,33 +30,21 @@ jobs:
             sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
           fi
 
-      - name: Write Ansible Vault password to file
+      - name: List files in ansible directory for debugging
+        run: ls -a /opt/pertclinic/ansible
+
+      - name: Decode Ansible Vault password and write to file
         env:
           ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT }}
         run: |
-          echo "$ANSIBLE_VAULT_PASSWORD" > vault-password.txt
+          echo "$ANSIBLE_VAULT_PASSWORD" | base64 --decode > vault-password.txt
           cat vault-password.txt  # Debugging step to check content
 
       - name: Decrypt Ansible Vault file
-        env:
-          ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT }}
         run: |
           ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.yml --vault-password-file vault-password.txt
           rm vault-password.txt  # Remove the password file after use
-
-      - name: List files in ansible directory after decryption for debugging
-        run: ls -a /opt/pertclinic/ansible  
-
-      - name: test
-        run: ls -a /opt/pertclinic/ansible
-
-      - name: Decrypt Ansible Vault file
-        env:
-          ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT }}
-        run: |
-          echo "$ANSIBLE_VAULT_PASSWORD" > vault-password.txt
-          ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.yml --vault-password-file vault-password.txt
-          
+  
       - name: Terraform Init
         run: |
           cd /opt/pertclinic/terraform-azure 
