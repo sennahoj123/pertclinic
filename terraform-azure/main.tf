@@ -106,7 +106,9 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
 # Output block to print public IP addresses
 output "public_ip_addresses" {
-  value = azurerm_public_ip.az_ip.*.ip_address
+  value = {
+    for key, public_ip in azurerm_public_ip.az_ip : key => public_ip.ip_address
+  } 
 }
 # Variable declaration for SSH public key
 variable "ssh_public_key" {
