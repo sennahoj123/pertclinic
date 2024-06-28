@@ -30,6 +30,15 @@ jobs:
             sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
           fi
 
+      - name: Create Ansible Vault password file
+        env:
+          ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT }}
+        run: |
+          echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/vault_password
+
+      - name: Decrypt Ansible Vault
+        run: ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.yml --output /opt/pertclinic/ansible/ssh_key_decrypted.yml --vault-password-file /tmp/vault_password
+
       - name: Terraform Init
         run: |
           cd /opt/pertclinic/terraform-azure 
