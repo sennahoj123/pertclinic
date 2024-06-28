@@ -30,6 +30,16 @@ jobs:
             sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
           fi
 
+      - name: Decrypt Ansible Vault
+        env:
+          ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT }}
+        run: |
+          ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.yml --output /opt/pertclinic/ansible/ssh_key_decrypted.yml
+
+      - name: Extract SSH Public Key
+        run: |
+          grep "ssh-rsa" /opt/pertclinic/ansible/ssh_key_decrypted.yml > /opt/pertclinic/ansible/ssh_key.pub
+
       - name: Terraform Init
         run: |
           cd /opt/pertclinic/terraform-azure 
