@@ -4,7 +4,7 @@ on: push
 jobs:
   build-VMs:
     name: Setup and Configure VM
-    runs-on: iede
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
@@ -38,11 +38,7 @@ jobs:
 
       - name: Decrypt Ansible Vault
         run: |
-          ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.yml --output /opt/pertclinic/ansible/ssh_key_decrypted.yml --vault-password-file /tmp/vault_password
-
-      - name: Extract SSH Public Key
-        run: |
-          grep "ssh-rsa" /opt/pertclinic/ansible/ssh_key_decrypted.yml > /opt/pertclinic/ansible/ssh_key.pub
+          ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.pub --output /opt/pertclinic/ansible/ssh_key_decrypted.pub --vault-password-file /tmp/vault_password
 
       - name: Terraform Init
         run: |
@@ -78,7 +74,7 @@ jobs:
 
   testing-VM:
     name: Bootstrap testing
-    runs-on: iede
+    runs-on: ubuntu-latest
     needs: build-VMs
     steps:
       - name: Testing Playbook
@@ -93,7 +89,7 @@ jobs:
 
   acceptance-VM:
     name: Bootstrap acceptance
-    runs-on: iede
+    runs-on: ubuntu-latest
     needs: testing-VM
     steps:
       - name: Acceptance Playbook
@@ -101,7 +97,7 @@ jobs:
   
   production-VM:
     name: Bootstrap production
-    runs-on: iede
+    runs-on: ubuntu-latest
     needs: acceptance-VM
     steps:
       - name: Production Playbook
@@ -109,7 +105,7 @@ jobs:
 
   Destroy:
     name: Terraform Destroy & rm git repo
-    runs-on: iede
+    runs-on: ubuntu-latest
     needs: production-VM
     steps:
       - name: Check out repository
@@ -139,4 +135,3 @@ jobs:
             
       #- name: rm git repo
        # run: sudo rm -r /opt/pertclinic
-

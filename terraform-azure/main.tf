@@ -78,7 +78,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("/opt/pertclinic/ansible/ssh_key.pub")
+    public_key = file("/opt/pertclinic/ansible/ssh_key_decrypted.pub")
   }
 
   os_disk {
@@ -106,7 +106,5 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
 # Output block to print public IP addresses
 output "public_ip_addresses" {
-  value = {
-    for key, ip in azurerm_public_ip.az_ip : key => ip.ip_address
-  }
+  value = azurerm_public_ip.az_ip.*.ip_address
 }
