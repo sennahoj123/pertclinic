@@ -38,7 +38,7 @@ jobs:
           ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT }}
         run: |
           echo "$ANSIBLE_VAULT_PASSWORD" > vault-password.txt
-          ansible-vault decrypt /opt/pertclinic/ansible/ssh-key.yml --vault-password-file vault-password.txt
+          ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.yml --vault-password-file vault-password.txt
           
       - name: Terraform Init
         run: |
