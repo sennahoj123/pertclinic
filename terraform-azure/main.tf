@@ -78,7 +78,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("/opt/pertclinic/ansible/ssh-key.yml")
+    public_key = file("${path.module}/opt/pertclinic/ansible/ssh-key.yml")
   }
 
   os_disk {
