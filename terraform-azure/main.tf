@@ -108,3 +108,8 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 output "public_ip_addresses" {
   value = azurerm_public_ip.az_ip.*.ip_address
 }
+# Variable declaration for SSH public key
+variable "ssh_public_key" {
+  type        = string
+  description = "SSH public key for adminuser"
+}
