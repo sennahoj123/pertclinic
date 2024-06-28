@@ -12,11 +12,11 @@ jobs:
 
       - name: Create SSH directory and config file
         run: |
-          mkdir -p /home/adminuser/.ssh
-          touch /home/adminuser/.ssh/config
-          echo "Host *" > /home/adminuser/.ssh/config
-          echo "  StrictHostKeyChecking no" >> /home/adminuser/.ssh/config
-
+          sudo mkdir -p /home/adminuser/.ssh
+          sudo touch /home/adminuser/.ssh/config
+          echo "Host *" | sudo tee -a /home/adminuser/.ssh/config > /dev/null
+          echo "  StrictHostKeyChecking no" | sudo tee -a /home/adminuser/.ssh/config > /dev/null
+          
       - name: Create directory for repo
         run: sudo mkdir -p /opt/pertclinic
       
