@@ -78,7 +78,7 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("${path.module}/opt/pertclinic/ansible/ssh-key.yml")
+    public_key = file("/opt/pertclinic/ansible/ssh_key.pub")
   }
 
   os_disk {
@@ -100,9 +100,10 @@ resource "azurerm_linux_virtual_machine" "az_vm" {
       echo "${azurerm_public_ip.az_ip[each.key].ip_address}" >> /opt/pertclinic/terraform-azure/public_ips.txt
     EOT
 
-    working_dir = "/opt/pertclinic/terraform-azure"  # Optionally specify the working directory for the command
+    working_dir = "/opt/pertclinic/terraform-azure"
   }
 }
+
 # Output block to print public IP addresses
 output "public_ip_addresses" {
   value = {
