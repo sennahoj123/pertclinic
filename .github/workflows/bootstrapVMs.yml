@@ -22,20 +22,33 @@ jobs:
       - name: Set ownership of directory
         run: sudo chown adminuser:adminuser /opt/pertclinic
       
-      - name: Clone repo
-        run: sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
+      - name: Clone or pull repo
+        run: |
+          if [ -d "/opt/pertclinic/.git" ]; then
+            sudo -u adminuser git -C /opt/pertclinic pull
+          else
+            sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
+          fi
 
       - name: Terraform Init
-        working-directory: terraform-azure
-        run: terraform init
+        run: |
+          cd /opt/pertclinic/terraform-azure 
+          terraform init
+
+      #- name: import
+       # run: |
+        #  cd /opt/pertclinic/terraform-azure
+         # terraform import azurerm_resource_group.existing /subscriptions/41e50375-b926-4bc4-9045-348f359cf721/resourceGroups/iede_adu-rg
 
       - name: Terraform Apply
-        working-directory: terraform-azure
-        run: terraform apply -auto-approve
+        run: |
+          cd /opt/pertclinic/terraform-azure 
+          terraform apply -auto-approve
 
       - name: Output Public IP Addresses
-        working-directory: terraform-azure
-        run: sleep 10 && terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
+        run: |
+          cd /opt/pertclinic/terraform-azure 
+          sleep 10 && terraform output -json > /opt/pertclinic/terraform-azure/ip_addresses.json
 
       - name: Check IP Addresses File
         run: cat /opt/pertclinic/terraform-azure/ip_addresses.json
