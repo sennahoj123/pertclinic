@@ -4,7 +4,7 @@ on: push
 jobs:
   build-VMs:
     name: Setup and Configure VM
-    runs-on: ubuntu-latest
+    runs-on: iede
     
     steps:
       - name: Checkout repository
@@ -29,16 +29,6 @@ jobs:
           else
             sudo -u adminuser git clone -b pet-iede https://github.com/sennahoj123/pertclinic.git /opt/pertclinic
           fi
-
-      - name: Decrypt Ansible Vault
-        env:
-          ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT }}
-        run: |
-          ansible-vault decrypt /opt/pertclinic/ansible/ssh_key.yml --output /opt/pertclinic/ansible/ssh_key_decrypted.yml
-
-      - name: Extract SSH Public Key
-        run: |
-          grep "ssh-rsa" /opt/pertclinic/ansible/ssh_key_decrypted.yml > /opt/pertclinic/ansible/ssh_key.pub
 
       - name: Terraform Init
         run: |
@@ -74,7 +64,7 @@ jobs:
 
   testing-VM:
     name: Bootstrap testing
-    runs-on: ubuntu-latest
+    runs-on: iede
     needs: build-VMs
     steps:
       - name: Testing Playbook
@@ -89,7 +79,7 @@ jobs:
 
   acceptance-VM:
     name: Bootstrap acceptance
-    runs-on: ubuntu-latest
+    runs-on: iede
     needs: testing-VM
     steps:
       - name: Acceptance Playbook
@@ -97,7 +87,7 @@ jobs:
   
   production-VM:
     name: Bootstrap production
-    runs-on: ubuntu-latest
+    runs-on: iede
     needs: acceptance-VM
     steps:
       - name: Production Playbook
@@ -105,7 +95,7 @@ jobs:
 
   Destroy:
     name: Terraform Destroy & rm git repo
-    runs-on: ubuntu-latest
+    runs-on: iede
     needs: production-VM
     steps:
       - name: Check out repository
@@ -135,3 +125,4 @@ jobs:
             
       #- name: rm git repo
        # run: sudo rm -r /opt/pertclinic
+
