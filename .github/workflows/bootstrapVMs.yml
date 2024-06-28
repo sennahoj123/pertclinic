@@ -10,12 +10,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: SSH CONFIG FILE
-        run: |
+      - name: SSH CONFIG
+        run: | 
           touch /home/adminuser/.ssh/config
           echo "Host *" > /home/adminuser/.ssh/config
           echo "  StrictHostKeyChecking no" >> /home/adminuser/.ssh/config
-
+      
       - name: Create directory for repo
         run: sudo mkdir -p /opt/pertclinic
       
