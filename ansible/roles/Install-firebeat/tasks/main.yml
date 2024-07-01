@@ -110,7 +110,7 @@
 - name: start Filebeat service
   ansible.builtin.systemd:
     name: filebeat
-    state: start
+    state: started
   become: yes
 
 - name: Enable modules
