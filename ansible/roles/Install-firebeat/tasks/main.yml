@@ -13,16 +13,16 @@
 - name: Install Filebeat
   ansible.builtin.shell: apt-get install filebeat -y
 
-- name: Backup Metricbeat configuration file
+- name: Backup filebeat configuration file
   ansible.builtin.copy:
-    src: /etc/metricbeat/metricbeat.yml
+    src: /etc/filebeat/filebeat.yml
     dest: /etc/metricbeat/metricbeat.yml.bakup
     remote_src: yes
     backup: yes
 
-- name: Remove all content from Metricbeat configuration file
+- name: Remove all content from fielbeat configuration file
   ansible.builtin.shell:
-    cmd: echo -n | sudo tee /etc/metricbeat/metricbeat.yml
+    cmd: echo -n | sudo tee /etc/filebeat/filebeat.yml
 
 - name: Add paths to Filebeat inputs
   ansible.builtin.blockinfile:
@@ -106,18 +106,49 @@
   become: yes
 
 - name: Enable modules
-  ansible.builtin.shell: sudo filebeat modules enable tomcat
+  ansible.builtin.shell: sudo filebeat modules enable apache
 
 - name: Restart Filebeat service
   ansible.builtin.systemd:
     name: filebeat
-    state: restarted
+    state: start
   become: yes
 
 - name: Enable Filebeat service on boot
   ansible.builtin.systemd:
     name: filebeat
     enabled: yes
+  become: yes
+
+- name: Remove all content from apache configuration file
+  ansible.builtin.shell:
+    cmd: echo -n | sudo tee  /etc/filebeat/modules.d/apache.yml
+
+- name: Add paths to Filebeat inputs
+  ansible.builtin.blockinfile:
+    path: /etc/filebeat/filebeat.yml
+    block: |
+      # Module: apache
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/7.9/filebeat-module-apache.html
+
+      - module: apache
+        # Access logs
+        access:
+          enabled: true
+          var.paths: ["/var/log/tomcat9/localhost_access_log.*.txt"]
+          ##The type:access_log will help us point these logs to the right direction 
+          input:
+            processors:
+              - add_fields:
+                  target: fields
+                  fields:
+                    codec: plain
+                    type: access_log
+
+- name: Restart Filebeat service
+  ansible.builtin.systemd:
+    name: filebeat
+    state: restarted
   become: yes
 
 - name: Update apt cache
