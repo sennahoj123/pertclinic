@@ -21,10 +21,8 @@
     backup: yes
 
 - name: Remove all content from Metricbeat configuration file
-  ansible.builtin.lineinfile:
-    path: /etc/metricbeat/metricbeat.yml
-    state: absent
-    create: yes
+  ansible.builtin.shell:
+    cmd: echo -n | sudo tee /etc/metricbeat/metricbeat.yml
 
 - name: Add paths to Filebeat inputs
   ansible.builtin.blockinfile:
