@@ -13,37 +13,93 @@
 - name: Install Filebeat
   ansible.builtin.shell: apt-get install filebeat -y
 
-- name: Create a backup of filebeat.yml
-  ansible.builtin.command:
-    cmd: cp /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.yml.backup
-    creates: /etc/filebeat/filebeat.yml.backup
+- name: Remove all lines from the file
+  lineinfile:
+    path: /etc/filebeat/filebeat.yml
+    state: absent
+    backup: yes
+  become: yes
 
 - name: Add paths to Filebeat inputs
   ansible.builtin.blockinfile:
     path: /etc/filebeat/filebeat.yml
     block: |
-      paths:
-        - /var/log/*.log
-        - /opt/tomcat/logs/*.log
-        - /opt/tomcat/logs/*.txt
-        - /opt/tomcat/logs/*.out
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+      filebeat.inputs:
+        ## Catalina logs 
+        - type: log
+          enabled: true
+          paths:
+            - /opt/tomcat/logs/catalina.*.log
+          fields:
+            codec: plain
+            type: catalina_log
+        ##The dissect processor parses the catalina logs by means of a tokenizer
+          processors:
+            - dissect:
+                tokenizer: '%{date} %{time} %{catalina.warnLevel} [%{catalina.method}] %{catalina.class} %{catalina.logMessage}'
+                field: "message"
+        ##Filebeat processes each log file line-by-line
+        ##However it is possible that a singular Tomcat log entry might contain multiple lines in the form of a Java stack trace
+        ##To preserve the integrity of logs, we define a multiline pattern to process multiline stack traces as a single entry.
+          multiline.type: pattern
+          multiline.pattern: '^[[:space:]]+(at|\.{3})\b|^Caused by:'
+          multiline.negate: false
+          multiline.match: after
+        
+        ##Localhost Logs
+        - type: log
+          enabled: false
+          paths:
+            - /opt/tomcat/logs/localhost.*.log
+          tags: ["localhost_logs"]
+          fields:
+            codec: plain
+            type: localhost_log
+        ##The dissect processor parses the catalina logs by means of a tokenizer
+          processors:
+            - dissect:
+                tokenizer: '%{date} %{time} %{tomcatLocalhost.warnLevel} [%{tomcatLocalhost.method}] %{tomcatLocalhost.class} %{tomcatLocalhost.ListenerType}: %{ListenerLog}'
+                field: "message"
+
+        ##Filebeat processes each log file line-by-line
+        ##However it is possible that a singular Tomcat log entry might contain multiple lines in the form of a Java stack trace
+        ##To preserve the integrity of logs, we define a multiline pattern to process multiline stack traces as a single entry.
+
+          multiline.type: pattern
+          multiline.pattern: '^[[:space:]]'
+          multiline.negate: false
+          multiline.match: after
+          
+        filebeat.config.modules.path: ${path.config}/modules.d/*.yml
+
+        ##Defining an elasticsearch output. 
+        ##For more options on ES output, refer to the documentation at
+        ##https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html
+        output.elasticsearch:
+          hosts: [40.67.203.248:9200]
+          username: <ES-UserName>
+          password: <ES-Password>
+
+        ##By default, filebeat will send everything to the filebeat-7.9.2-<YYYY.MM.DD>-000001
+        ##Because we are shipping three different types of logs, it makes more sense to send them to different indices.
+        ##We will be splitting our indices based on the field type we set while processing the logs 
+          indices:
+            - index: "tomcat9-catalina-logs-%{+yyyy.MM.dd}"
+              when.equals:
+                fields.type: "catalina_log"
+            - index: "tomcat9-localhost-logs-%{+yyyy.MM.dd}"
+              when.equals:
+                fields.type: "localhost_log"
+            - index: "tomcat9-access-logs-%{+yyyy.MM.dd}"
+              when.equals:
+                fields.type: "access_log"
+
+        ##The following lines are needed in order to set up different indices
+        setup.ilm.enabled: false
+
+        setup.template.name: "tomcat9"
+        setup.template.pattern: "tomcat9-*"
   become: yes
-
-- name: Comment out Logstash output section in filebeat.yml
-  ansible.builtin.lineinfile:
-    path: /etc/filebeat/filebeat.yml
-    regexp: '^output\.logstash:'
-    line: '#output.logstash:'
-    state: present
-    backup: yes
-
-- name: Comment out Logstash hosts configuration
-  ansible.builtin.replace:
-    path: /etc/filebeat/filebeat.yml
-    regexp: '^#\s*hosts:\s*\[\"localhost:5044\"\]'
-    replace: '#hosts: ["localhost:5044"]'
-    backup: yes
 
 - name: Enable modules
   ansible.builtin.shell: sudo filebeat modules enable tomcat
@@ -70,6 +126,12 @@
   ansible.builtin.command:
     cmd: cp /etc/metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.yml.backup
     creates: /etc/metricbeat/metricbeat.yml.backup
+
+- name: Update Elasticsearch output configuration in Metricbeat
+  ansible.builtin.replace:
+    path: /etc/metricbeat/metricbeat.yml
+    regexp: '^(output.elasticsearch:\s*#.*?hosts:\s*\[)[^\]]*(\])'
+    replace: '\1["40.67.203.248:9200"]\2'
 
 - name: Enable Metricbeat modules
   ansible.builtin.shell: sudo systemctl enable metricbeat

@@ -15,3 +15,7 @@
     #- Install-tomcat
     #- Install-selenium
     - Install-ELK_slack
+
+    sudo metricbeat setup --index-management -E 'output.elasticsearch.hosts=["localhost:9200"]'
+    sudo metricbeat setup -e -E output.elasticsearch.hosts=['localhost:9200'] -E setup.kibana.host=localhost:5601
+ 
