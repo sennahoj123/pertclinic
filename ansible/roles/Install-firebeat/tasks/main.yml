@@ -13,12 +13,17 @@
 - name: Install Filebeat
   ansible.builtin.shell: apt-get install filebeat -y
 
-- name: Remove all lines from the file
-  lineinfile:
-    path: /etc/filebeat/filebeat.yml
-    state: absent
+- name: Backup Metricbeat configuration file
+  ansible.builtin.copy:
+    src: /etc/metricbeat/metricbeat.yml
+    dest: /etc/metricbeat/metricbeat.yml.bakup
+    remote_src: yes
     backup: yes
-  become: yes
+
+- name: Remove all content from Metricbeat configuration file
+  ansible.builtin.truncate:
+    path: /etc/metricbeat/metricbeat.yml
+    size: 0
 
 - name: Add paths to Filebeat inputs
   ansible.builtin.blockinfile:
