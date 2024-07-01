@@ -29,90 +29,92 @@
     path: /etc/filebeat/filebeat.yml
     block: |
       filebeat.inputs:
-        ## Catalina logs 
-        - type: log
-          enabled: true
-          paths:
-            - /opt/tomcat/logs/catalina.*.log
-          fields:
-            codec: plain
-            type: catalina_log
-        ##The dissect processor parses the catalina logs by means of a tokenizer
-          processors:
-            - dissect:
-                tokenizer: '%{date} %{time} %{catalina.warnLevel} [%{catalina.method}] %{catalina.class} %{catalina.logMessage}'
-                field: "message"
-        ##Filebeat processes each log file line-by-line
-        ##However it is possible that a singular Tomcat log entry might contain multiple lines in the form of a Java stack trace
-        ##To preserve the integrity of logs, we define a multiline pattern to process multiline stack traces as a single entry.
-          multiline.type: pattern
-          multiline.pattern: '^[[:space:]]+(at|\.{3})\b|^Caused by:'
-          multiline.negate: false
-          multiline.match: after
+
+      ## Catalina logs 
+      - type: log
+        enabled: true
+        paths:
+          - /opt/tomcat/logs/catalina.*.log
+        fields:
+          codec: plain
+          type: catalina_log
+      ##The dissect processor parses the catalina logs by means of a tokenizer
+        processors:
+          - dissect:
+              tokenizer: '%{date} %{time} %{catalina.warnLevel} [%{catalina.method}] %{catalina.class} %{catalina.logMessage}'
+              field: "message"
+      ##Filebeat processes each log file line-by-line
+      ##However it is possible that a singular Tomcat log entry might contain multiple lines in the form of a Java stack trace
+      ##To preserve the integrity of logs, we define a multiline pattern to process multiline stack traces as a single entry.
+        multiline.type: pattern
+        multiline.pattern: '^[[:space:]]+(at|\.{3})\b|^Caused by:'
+        multiline.negate: false
+        multiline.match: after
+      
+      ##Localhost Logs
+      - type: log
+        enabled: false
+        paths:
+          - /opt/tomcat/logs/localhost.*.log
+        tags: ["localhost_logs"]
+        fields:
+          codec: plain
+          type: localhost_log
+      ##The dissect processor parses the catalina logs by means of a tokenizer
+        processors:
+          - dissect:
+              tokenizer: '%{date} %{time} %{tomcatLocalhost.warnLevel} [%{tomcatLocalhost.method}] %{tomcatLocalhost.class} %{tomcatLocalhost.ListenerType}: %{ListenerLog}'
+              field: "message"
+
+      ##Filebeat processes each log file line-by-line
+      ##However it is possible that a singular Tomcat log entry might contain multiple lines in the form of a Java stack trace
+      ##To preserve the integrity of logs, we define a multiline pattern to process multiline stack traces as a single entry.
+
+        multiline.type: pattern
+        multiline.pattern: '^[[:space:]]'
+        multiline.negate: false
+        multiline.match: after
         
-        ##Localhost Logs
-        - type: log
-          enabled: false
-          paths:
-            - /opt/tomcat/logs/localhost.*.log
-          tags: ["localhost_logs"]
-          fields:
-            codec: plain
-            type: localhost_log
-        ##The dissect processor parses the catalina logs by means of a tokenizer
-          processors:
-            - dissect:
-                tokenizer: '%{date} %{time} %{tomcatLocalhost.warnLevel} [%{tomcatLocalhost.method}] %{tomcatLocalhost.class} %{tomcatLocalhost.ListenerType}: %{ListenerLog}'
-                field: "message"
+      filebeat.config.modules.path: ${path.config}/modules.d/*.yml
 
-        ##Filebeat processes each log file line-by-line
-        ##However it is possible that a singular Tomcat log entry might contain multiple lines in the form of a Java stack trace
-        ##To preserve the integrity of logs, we define a multiline pattern to process multiline stack traces as a single entry.
+      ##Defining an elasticsearch output. 
+      ##For more options on ES output, refer to the documentation at
+      ##https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html
+      output.elasticsearch:
+        hosts: [40.67.203.248:9200]
+        username: <ES-UserName>
+        password: <ES-Password>
 
-          multiline.type: pattern
-          multiline.pattern: '^[[:space:]]'
-          multiline.negate: false
-          multiline.match: after
-          
-        filebeat.config.modules.path: ${path.config}/modules.d/*.yml
+      ##By default, filebeat will send everything to the filebeat-7.9.2-<YYYY.MM.DD>-000001
+      ##Because we are shipping three different types of logs, it makes more sense to send them to different indices.
+      ##We will be splitting our indices based on the field type we set while processing the logs 
+        indices:
+          - index: "tomcat9-catalina-logs-%{+yyyy.MM.dd}"
+            when.equals:
+              fields.type: "catalina_log"
+          - index: "tomcat9-localhost-logs-%{+yyyy.MM.dd}"
+            when.equals:
+              fields.type: "localhost_log"
+          - index: "tomcat9-access-logs-%{+yyyy.MM.dd}"
+            when.equals:
+              fields.type: "access_log"
 
-        ##Defining an elasticsearch output. 
-        ##For more options on ES output, refer to the documentation at
-        ##https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html
-        output.elasticsearch:
-          hosts: [40.67.203.248:9200]
-          username: <ES-UserName>
-          password: <ES-Password>
+      ##The following lines are needed in order to set up different indices
+      setup.ilm.enabled: false
 
-        ##By default, filebeat will send everything to the filebeat-7.9.2-<YYYY.MM.DD>-000001
-        ##Because we are shipping three different types of logs, it makes more sense to send them to different indices.
-        ##We will be splitting our indices based on the field type we set while processing the logs 
-          indices:
-            - index: "tomcat9-catalina-logs-%{+yyyy.MM.dd}"
-              when.equals:
-                fields.type: "catalina_log"
-            - index: "tomcat9-localhost-logs-%{+yyyy.MM.dd}"
-              when.equals:
-                fields.type: "localhost_log"
-            - index: "tomcat9-access-logs-%{+yyyy.MM.dd}"
-              when.equals:
-                fields.type: "access_log"
-
-        ##The following lines are needed in order to set up different indices
-        setup.ilm.enabled: false
-
-        setup.template.name: "tomcat9"
-        setup.template.pattern: "tomcat9-*"
+      setup.template.name: "tomcat9"
+      setup.template.pattern: "tomcat9-*"
   become: yes
 
-- name: Enable modules
-  ansible.builtin.shell: sudo filebeat modules enable apache
 
-- name: Restart Filebeat service
+- name: start Filebeat service
   ansible.builtin.systemd:
     name: filebeat
     state: start
   become: yes
+
+- name: Enable modules
+  ansible.builtin.shell: sudo filebeat modules enable apache
 
 - name: Enable Filebeat service on boot
   ansible.builtin.systemd:
