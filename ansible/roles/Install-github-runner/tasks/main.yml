@@ -1,0 +1,40 @@
+---
+- name: Create a action runner diretory
+  file:
+    path: /opt/actions-runner
+    owner: adminuser
+    group: adminuser
+    mode: 755
+    recurse: yes
+
+- name: download & unarchive github runner 
+  unarchive:
+    src: https://github.com/actions/runner/releases/download/v2.316.1/actions-runner-linux-x64-2.316.1.tar.gz
+    dest: /opt/actions-runner
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Change ownership of actions-runner directory
+  file:
+    path: /opt/actions-runner
+    owner: adminuser
+    group: adminuser
+    mode: "u+rwx,g+rx,o=rx"
+    recurse: yes
+    state: directory
+
+- name: Configure Runner
+  shell:
+    chdir: /opt/actions-runner
+    cmd: "./config.sh --url https://github.com/sennahoj123/pertclinic --token BG6T6EEO2HBVRFT226375NDGOLFQM --unattended --labels iede, ubuntu, provisioningvm "
+  become: false
+  become_user: "sennahoj123"
+  ignore_errors: yes
+
+- name: Run runner as service
+  shell: |
+    cd /opt/actions-runner
+    ./svc.sh install
+    ./svc.sh start
+  become: true
+

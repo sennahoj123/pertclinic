@@ -1,0 +1,50 @@
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: Install Python 3 and pip
+  apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+
+- name: Create temporary directory for downloading files
+  file:
+    path: /tmp
+    state: directory
+    owner: adminuser
+    group: adminuser
+    recurse: yes
+
+- name: Download Google Chrome
+  ansible.builtin.shell:
+    cmd: wget -O /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+- name: Install Google Chrome
+  apt:
+    deb: /tmp/google-chrome-stable_current_amd64.deb
+    state: present
+  tags: chrome
+
+- name: Download Google Chrome Driver
+  ansible.builtin.shell:
+    cmd: wget -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.141/linux64/chromedriver-linux64.zip
+
+- name: Unzip Chrome Driver
+  unarchive:
+    src: /tmp/chromedriver.zip
+    dest: /tmp/
+    remote_src: yes
+
+- name: Move Chrome Driver to /usr/bin
+  ansible.builtin.command:
+    cmd: mv /tmp/chromedriver-linux64/chromedriver /usr/bin/chromedriver
+
+- name: Ensure chromedriver is executable
+  file:
+    path: /usr/bin/chromedriver
+    owner: adminuser
+    group: adminuser
+    mode: '0755'

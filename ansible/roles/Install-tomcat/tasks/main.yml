@@ -1,0 +1,81 @@
+- name: Update the System Packages
+  apt:
+    update_cache: yes
+
+- name: Create a Tomcat User
+  user:
+    name: tomcat
+
+- name: Create a Tomcat Group
+  group:
+    name: tomcat
+
+- name: Create a Tomcat Directory
+  file:
+    path: /opt/tomcat
+    owner: tomcat
+    group: tomcat
+    mode: "0755"
+    recurse: yes
+
+- name: Download Tomcat archive
+  ansible.builtin.shell:
+    cmd: wget -O /tmp/apache-tomcat-9.0.54.tar.gz https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz
+  args:
+    creates: /tmp/apache-tomcat-9.0.54.tar.gz
+
+- name: Extract Tomcat archive
+  ansible.builtin.unarchive:
+    src: /tmp/apache-tomcat-9.0.54.tar.gz
+    dest: /opt/tomcat
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Change ownership of Tomcat directory
+  ansible.builtin.file:
+    path: /opt/tomcat
+    owner: tomcat
+    group: tomcat
+    mode: "u+rwx,g+rx,o=rx"
+    recurse: yes
+    state: directory
+
+- name: Ensure Tomcat scripts are executable
+  ansible.builtin.file:
+    path: /opt/tomcat/bin/{{ item }}
+    mode: "0755"
+  loop:
+    - startup.sh
+    - shutdown.sh
+
+- name: Creating a service file
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/tomcat.service 
+    content: |
+      [Unit]
+      Description=Tomcat Service
+      After=network.target
+
+      [Service]
+      Type=forking
+      User=tomcat
+      Group=tomcat
+      Environment=CATALINA_PID=/opt/tomcat/temp/tomcat.pid
+      Environment=CATALINA_HOME=/opt/tomcat
+      Environment=CATALINA_BASE=/opt/tomcat
+      ExecStart=/opt/tomcat/bin/startup.sh
+      ExecStop=/opt/tomcat/bin/shutdown.sh
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd to recognize the Tomcat service
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Start and Enable Tomcat on server
+  ansible.builtin.systemd:
+    name: tomcat
+    state: started
+    enabled: yes

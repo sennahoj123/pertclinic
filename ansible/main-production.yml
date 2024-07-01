@@ -1,0 +1,48 @@
+## playbook to execute deploy vm
+- name: install testing vm
+  hosts: production
+  become: yes
+  remote_user: adminuser
+  roles:
+    - Install-openJDK
+    - Install-maven
+    #- Install-jmeter
+    # - Install-terraform&azure-cli
+    # - Install-ansi
+    #- Install-chrome
+    #- Install-github-runner
+    #- Install-docker
+    - Install-tomcat
+    #- Install-selenium
+    - Install-firebeat
+
+  tasks:
+    - name: Set MAVEN_OPTS environment variable
+      set_fact:
+        MAVEN_OPTS: "--add-opens java.base/java.lang=ALL-UNNAMED"
+
+    - name: Build WAR file
+      shell:
+        cmd: mvn clean package --file /opt/pertclinic/pom.xml
+        chdir: /opt/pertclinic
+      environment:
+        MAVEN_OPTS: "{{ MAVEN_OPTS }}"
+
+    - name: Set permissions for the WAR file
+      ansible.builtin.file:
+        path: /opt/pertclinic/target/petclinic.war
+        mode: '0777'
+    
+      register: maven_build_result
+      ignore_errors: true
+
+    - name: Check if the WAR file exists
+      stat:
+        path: "/opt/pertclinic/target/petclinic.war"        
+      register: war_file_status
+      failed_when: false
+      when: maven_build_result is succeeded
+
+    - name: Copy WAR file to Tomcat webapps directory
+      ansible.builtin.shell:
+        cmd: cp /opt/pertclinic/target/petclinic.war /opt/tomcat/webapps/petclinic.war 

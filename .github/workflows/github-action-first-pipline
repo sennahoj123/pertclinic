@@ -1,0 +1,56 @@
+name: build & deploy petclinic java
+#on:
+  #push:
+  #schedule:
+    - cron: '0 12 * * *'
+
+jobs:
+  maven-build:
+    name: Build petclinic WAR
+    runs-on: self-hosted
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+      - name: build WAR
+        run: mvn -B package --file pom.xml
+      - name: upload .war
+        uses: actions/upload-artifact@v4
+        with:
+          name: petclinic.war
+          path: target/**.war
+  maven-deploy:
+    name: Deploy Maven
+    runs-on: self-hosted
+    needs: maven-build
+    steps:
+      - name: download artifect
+        uses: actions/download-artifact@v4
+        with:
+          name: petclinic.war
+      - name: Display structure of downloaded files
+        run: ls -R  
+      - name: copy war to tomcat server
+        run: cp ./petclinic.war /opt/tomcat/webapps/
+  Selinium-test:
+    name: Selinium Test
+    runs-on: self-hosted
+    steps:
+      - name: Selinium
+        run: selenium-side-runner PetclinicSeleniumTest.side
+  Jmeter-test:
+    name: Jmeter Test
+    runs-on: self-hosted
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t jmeterrun .
+      - name: Run Docker container
+        run: docker run -v $PWD:/opt/apache-jmeter-5.6.3/bin/results jmeterrun
+      - name: upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test_results
+          path: ./testresultsiede.jtl
+      - name: check error code
+        run: grep "Non HTTP response message" testresultsiede.jtl || exit 1

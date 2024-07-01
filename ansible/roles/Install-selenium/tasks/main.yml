@@ -1,0 +1,32 @@
+---
+- name: Update apt package cache and install prerequisites
+  ansible.builtin.apt:
+    update_cache: yes
+    name:
+      - curl
+      - nodejs
+      - python3
+      - python3-pip
+  become: yes
+
+- name: Add Node.js 20 repository
+  ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+  become: yes
+
+- name: Ensure Node.js was installed
+  ansible.builtin.command: node --version
+  register: node_version_check
+  failed_when: node_version_check.rc != 0
+
+- name: Ignore PEP 668 because it's silly.
+  ansible.builtin.file:
+    path: /usr/lib/python3.12/EXTERNALLY-MANAGED
+    state: absent
+
+- name: Install Selenium and Selenium Side Runner
+  ansible.builtin.pip:
+    name:
+      - selenium
+      - six
+  become: yes
+

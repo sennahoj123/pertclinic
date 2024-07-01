@@ -1,0 +1,160 @@
+- name: Add the Elastic GPG key
+  ansible.builtin.shell: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+  become: yes
+
+- name: Install apt-transport-https
+  apt:
+    name: apt-transport-https
+    state: present
+  become: yes
+
+- name: Add the Elastic APT repository
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/elastic-8.x.list
+    line: "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main"
+    create: yes
+  become: yes
+
+- name: Update APT package index
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Install Elasticsearch
+  ansible.builtin.shell: sudo apt install -y elasticsearch
+  become: yes
+
+- name: copy Elasticsearch
+  ansible.builtin.shell: cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml.backup
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: '^#?network.host:'
+    line: 'network.host: 0.0.0.0'
+  become: yes
+
+- name: Configure Elasticsearch port host
+  ansible.builtin.lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: '^#?http.port:'
+    line: 'http.port: 9200'
+  become: yes
+
+- name: Start Elasticsearch service
+  ansible.builtin.service:
+    name: elasticsearch
+    state: started
+  become: yes
+
+- name: Enable Elasticsearch service
+  ansible.builtin.service:
+    name: elasticsearch
+    enabled: yes
+  become: yes
+
+- name: Install Kibana
+  ansible.builtin.apt:
+    name: kibana
+    state: present
+  become: yes
+
+- name: Configure Kibana copy
+  ansible.builtin.shell: cp /etc/kibana/kibana.yml /etc/kibana/kibana.yml.backup
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/kibana/kibana.yml
+    regexp: '^#?server.host:'
+    line: 'server.host: "localhost"'
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/kibana/kibana.yml
+    regexp: '^#?server.port:'
+    line: 'server.port: 5601'
+  become: yes
+
+- name: Configure Elasticsearch network host
+  ansible.builtin.lineinfile:
+    path: /etc/kibana/kibana.yml
+    regexp: '^#?elasticsearch.hosts:'
+    line: 'elasticsearch.hosts: ["http://localhost:9200"]'
+  become: yes
+
+- name: Start Kibana service
+  ansible.builtin.service:
+    name: kibana
+    state: started
+  become: yes
+
+- name: Enable Kibana service
+  ansible.builtin.service:
+    name: kibana
+    enabled: yes
+  become: yes
+
+- name: Install Logstash
+  ansible.builtin.apt:
+    name: logstash
+    state: present
+  become: yes
+
+- name: Configure Logstash input and output
+  ansible.builtin.shell:
+    cmd: >
+      echo 'input {
+        beats {
+          port => 5044
+        }
+      }
+
+      output {
+        elasticsearch {
+          hosts => ["http://74.234.232.208:9200"]
+          user => "elastic"
+          password => "SXbgo4we4tPcO83iP=q4"
+          ssl => true
+          cacert => "/etc/logstash/http_ca.crt"
+          index => "logstashvm-%{+YYYY.MM.dd}"
+        }
+        stdout { codec => rubydebug }
+      }' > /etc/logstash/conf.d/logstash.conf
+  become: yes
+
+- name: Start Logstash service
+  ansible.builtin.service:
+    name: logstash
+    state: started
+  become: yes
+
+- name: Enable Logstash service
+  ansible.builtin.service:
+    name: logstash
+    enabled: yes
+  become: yes
+
+- name: Allow firewall ports for ELK
+  ansible.builtin.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  with_items:
+    - 9200  # Elasticsearch
+    - 5044  # Logstash
+    - 5601  # Kibana
+  become: yes
+
+- name: Reload UFW
+  ansible.builtin.command: ufw reload
+  become: yes
+
+
+
+
+
+
+
