@@ -24,6 +24,7 @@
   ansible.builtin.lineinfile:
     path: /etc/metricbeat/metricbeat.yml
     state: absent
+    create: yes
 
 - name: Add paths to Filebeat inputs
   ansible.builtin.blockinfile:
